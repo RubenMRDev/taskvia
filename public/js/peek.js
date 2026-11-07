@@ -24,7 +24,8 @@ function renderPeek() {
       ${c.archived ? `<div class="banner">${icon('archive', 'sm')}<span>Esta tarjeta está archivada: no aparece en el tablero.</span><button class="btn ghost" data-act="card-archive">Sacar del archivo</button></div>` : ''}
       ${c.template ? `<div class="banner">${icon('layout-template', 'sm')}<span>Esta tarjeta es una plantilla: úsala desde el botón de plantillas de cada columna.</span><button class="btn ghost" data-act="card-template">Dejar de ser plantilla</button></div>` : ''}
       ${(() => { const im = String(c.cover).startsWith('img:') && (c.attachments ?? []).find(a => 'img:' + a.id === c.cover);
-        return im ? `<div class="peek-cover-img"><img src="${assetUrl(route.project, im.file)}" alt=""></div>` : c.cover ? `<div class="peek-cover c-${c.cover}"></div>` : ''; })()}
+        const btn = `<button class="btn cover-btn" data-act="card-cover">${icon('panel-top', 'sm')}Portada</button>`;
+        return im ? `<div class="peek-cover-img"><img src="${assetUrl(route.project, im.file)}" alt="">${btn}</div>` : c.cover ? `<div class="peek-cover c-${c.cover}">${btn}</div>` : ''; })()}
       <div class="peek-inner">
         <div class="phead">
           <div class="head-acts">

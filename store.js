@@ -223,13 +223,14 @@ function boardName(p, name, exceptId) {
 
 export const getBoard = (projRef, boardRef) => board(project(projRef), boardRef);
 
-export function createBoard(projRef, { name, emoji, icon, columns = ['Por hacer', 'En curso', 'Hecho'] }) {
+// labels: [{ name, color }] de la plantilla elegida; columns puede venir vacío (tablero en blanco)
+export function createBoard(projRef, { name, emoji, icon, columns = ['Por hacer', 'En curso', 'Hecho'], labels = [] }) {
   const p = project(projRef);
   emoji = toIcon(icon ?? emoji, 'board');
   const b = {
     id: newId(), name: boardName(p, name), emoji,
     columns: columns.map((n, i) => ({ id: newId(), name: n, color: COLUMN_COLORS[i % COLUMN_COLORS.length] })),
-    labels: [], cards: [], createdAt: now(),
+    labels: labels.map(l => ({ id: newId(), name: String(l.name).trim(), color: color(l.color) })).filter(l => l.name), cards: [], createdAt: now(),
   };
   saveBoard(p, b);
   return b;
@@ -448,7 +449,7 @@ export const createCard = (projRef, boardRef, { title, description = '', column,
   });
 
 // baseDescription: la descripción que tenía el editor al empezar. Si ya no coincide, alguien la cambió → conflicto.
-export const updateCard = (id, { title, description, baseDescription, emoji, icon, cover, labels, docs, column, start, due, dueDone, template }) => {
+export const updateCard = (id, { title, description, baseDescription, emoji, icon, cover, coverSize, labels, docs, column, start, due, dueDone, template }) => {
   if (icon !== undefined) emoji = icon;
   if (column !== undefined) moveCard(id, column);
   return mutateCard(id, (c, b) => {
@@ -465,6 +466,8 @@ export const updateCard = (id, { title, description, baseDescription, emoji, ico
     }
     if (emoji !== undefined) c.emoji = toIcon(emoji);
     if (cover !== undefined) c.cover = cleanCover(c, cover);
+    // Portada arriba (franja) o completa (la tarjeta entera es la portada, con el título encima)
+    if (coverSize !== undefined) { if (coverSize === 'full') c.coverSize = 'full'; else delete c.coverSize; }
     setDates(c, { start, due, dueDone });
     if (template !== undefined && !!template !== !!c.template) {
       if (template) c.template = true; else delete c.template;
@@ -552,14 +555,17 @@ function storeFile(p, name, data) {
   return file;
 }
 const cleanFileName = n => String(n ?? '').replace(/[\x00-\x1f<>:"/\\|?*]/g, '').trim().slice(0, 120) || 'fichero';
-export function addAttachment(id, { name, base64 }) {
+// cover: además la pone de portada (subir imagen desde «Portada»)
+export function addAttachment(id, { name, base64, cover = false }) {
   const data = Buffer.from(String(base64 ?? ''), 'base64');
   if (!data.length) throw new Error('El fichero está vacío');
   if (data.length > MAX_FILE) throw new Error('El fichero pasa de 25 MB');
   const { p } = locate(id), file = storeFile(p, name, data);
   return mutateCard(id, c => {
-    (c.attachments ??= []).push({ id: newId(), name: cleanFileName(name), file: `assets/${file}`, size: data.length, addedAt: now(), by: actor });
-    log(c, `adjuntó «${cleanFileName(name)}»`);
+    const att = { id: newId(), name: cleanFileName(name), file: `assets/${file}`, size: data.length, addedAt: now(), by: actor };
+    c.attachments = [...(c.attachments ?? []), att];
+    log(c, `adjuntó «${att.name}»`);
+    if (cover) c.cover = cleanCover(c, 'img:' + att.id);
   });
 }
 export function addLink(id, { url, name }) {

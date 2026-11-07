@@ -62,6 +62,15 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
   <header><h2 id="settings-title">Ajustes</h2><button class="ib" data-close title="Cerrar (Esc)"><svg class="i"><use href="/icons.svg#x"/></svg></button></header>
   <div id="settings-body"></div>
 </dialog>
+<dialog id="new-board" class="sheet" aria-labelledby="nb-title">
+  <header><h2 id="nb-title">Nuevo tablero</h2><button class="ib" data-close title="Cerrar (Esc)"><svg class="i"><use href="/icons.svg#x"/></svg></button></header>
+  <form method="dialog" class="nb-body">
+    <label class="nb-name"><span>Nombre</span><input id="nb-name" autocomplete="off" spellcheck="false"></label>
+    <div class="pop-label">Plantilla</div>
+    <div id="nb-templates" class="nb-grid" role="radiogroup" aria-label="Plantilla"></div>
+    <div class="confirm-actions"><button class="btn ghost" type="button" data-close>Cancelar</button><button class="btn primary" value="ok">Crear tablero</button></div>
+  </form>
+</dialog>
 <dialog id="confirm" class="sheet" aria-labelledby="confirm-title">
   <h2 id="confirm-title"></h2><p id="confirm-text"></p>
   <div class="confirm-actions"><button class="btn ghost" value="cancel">Cancelar</button><button class="btn solid-danger" value="ok">Eliminar</button></div>

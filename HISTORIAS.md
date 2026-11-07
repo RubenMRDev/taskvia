@@ -29,3 +29,5 @@ Cada una se ha probado en la app (navegador interno + ventana Electron) o con `n
 25. **Tarjetas completas.** Varias checklists, adjuntos (ficheros y enlaces) y una imagen de portada.
 26. **Reutilizar y reorganizar.** Plantillas de tarjeta, copiar o mover tarjetas a otro tablero, plegar, copiar y ordenar columnas, fondo y duplicado de tableros.
 27. **Teclado.** Los atajos de teclado de tablero kanban que tienen sentido para una persona, con `?` para verlos.
+28. **Empezar un tablero.** Al crear un tablero elijo plantilla (vacío, tareas, tareas con tamaño, sprint, contenido) y nace con sus columnas y etiquetas.
+29. **Portadas.** Desde el menú de la tarjeta pongo una portada de color o una imagen, como franja arriba o en toda la tarjeta.

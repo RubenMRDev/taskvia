@@ -83,7 +83,7 @@ function itemMenu(anchor, d) {
     project: M('board', 'kanban', 'Nuevo tablero') + M('page', 'file-plus', 'Nueva página') + SEP + FAV + ICON + REN + SEP + M('delete', 'trash', 'Eliminar proyecto', 'danger'),
     board: M('open', 'arrow-up-right', 'Abrir') + FAV + ICON + REN + SEP + M('delete', 'trash', 'Eliminar tablero', 'danger'),
     page: M('open', 'arrow-up-right', 'Abrir') + M('sub', 'file-plus', 'Añadir subpágina') + FAV + ICON + REN + M('copy', 'copy', 'Copiar ruta') + SEP + M('delete', 'trash', 'Eliminar página', 'danger'),
-    card: card && (M('open', 'arrow-up-right', 'Abrir') + ICON + REN + M('dates', 'calendar', 'Fechas…') + M('ai', 'bot', 'Copiar para la IA') + SEP
+    card: card && (M('open', 'arrow-up-right', 'Abrir') + ICON + REN + M('dates', 'calendar', 'Fechas…') + M('cover', 'panel-top', 'Portada…') + M('ai', 'bot', 'Copiar para la IA') + SEP
       + M('copy-card', 'copy-plus', 'Copiar') + M('copy-to', 'copy', 'Copiar a otro tablero…') + M('move-to', 'arrow-right-left', 'Mover a otro tablero…')
       + M('template', 'layout-template', card.template ? 'Dejar de ser plantilla' : 'Convertir en plantilla')
       + M('archive', card.archived ? 'rotate-ccw' : 'archive', card.archived ? 'Sacar del archivo' : 'Archivar') + SEP + '<div class="pop-label">Mover a</div>'
@@ -95,7 +95,7 @@ function itemMenu(anchor, d) {
     list: () => body,
     pick: async v => {
       if (v === 'icon') return emojiPicker(popAnchor, iconOf(kind, d), x => setIcon(kind, d, x));
-      if (['dates', 'copy-to', 'move-to'].includes(v)) return ({ dates: () => datesPicker(popAnchor, card), 'copy-to': () => boardPicker(popAnchor, card, 'copy'), 'move-to': () => boardPicker(popAnchor, card, 'move') })[v]();
+      if (['dates', 'copy-to', 'move-to', 'cover'].includes(v)) return ({ cover: () => coverPicker(popAnchor, card), dates: () => datesPicker(popAnchor, card), 'copy-to': () => boardPicker(popAnchor, card, 'copy'), 'move-to': () => boardPicker(popAnchor, card, 'move') })[v]();
       closePop();
       if (v === 'board') return newBoard(p);
       if (v === 'page') return newPage(p);

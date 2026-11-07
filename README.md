@@ -13,10 +13,11 @@ Taskvia pone en orden las tareas, la documentación y lo que la IA va haciendo e
 ## Qué tiene
 
 **Tableros (un kanban para una persona)**
+- Al crear un tablero eliges plantilla: vacío, tareas, tareas con tamaño, sprint o contenido.
 - Columnas que se arrastran, se pliegan, se copian y se ordenan (por vencimiento, título o antigüedad).
 - Tarjetas con:
   - descripción con formato, etiquetas de color, fechas de inicio y vencimiento (en rojo si vencen, en verde si están hechas);
-  - varias checklists, adjuntos (ficheros y enlaces), portada de color o de imagen, icono;
+  - varias checklists, adjuntos (ficheros y enlaces), portada de color o de imagen (como franja arriba o en toda la tarjeta), icono;
   - notas de trabajo e historial de cambios.
 - Vistas **Tablero**, **Lista** y **Calendario**; filtros por texto, etiqueta y fecha.
 - Plantillas de tarjeta, copiar o mover tarjetas a otro tablero (o proyecto), archivar en vez de borrar, fondo del tablero y duplicar tableros.

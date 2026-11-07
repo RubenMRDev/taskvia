@@ -76,6 +76,10 @@ function cardHTML(c) {
     c.notes?.length ? `<span title="Notas">${icon('message-square-text', 'sm')}${c.notes.length}</span>` : '',
     c.attachments?.length ? `<span title="Adjuntos">${icon('paperclip', 'sm')}${c.attachments.length}</span>` : '',
   ].join('');
+  // Portada completa: la tarjeta entera es la portada (color o imagen) con el título encima, sin etiquetas ni datos
+  if (c.cover && c.coverSize === 'full') return `<article class="card full-cover ${coverImg ? 'img' : 'c-' + c.cover}" draggable="true" tabindex="0" data-card="${c.id}" data-kind="card" data-id="${c.id}">
+    ${coverImg ? `<img src="${assetUrl(route.project, coverImg.file)}" alt="" loading="lazy" draggable="false">` : ''}
+    <div class="card-title">${c.emoji ? `<span class="em">${glyph(c.emoji)}</span>` : ''}${esc(c.title)}</div></article>`;
   return `<article class="card" draggable="true" tabindex="0" data-card="${c.id}" data-kind="card" data-id="${c.id}">
     ${coverImg ? `<div class="cover-img"><img src="${assetUrl(route.project, coverImg.file)}" alt="" loading="lazy" draggable="false"></div>` : c.cover && !coverImg ? `<div class="cover c-${c.cover}"></div>` : ''}
     <div class="card-body">
@@ -107,7 +111,7 @@ function boardView() {
   const last = b.columns.at(-1), mode = viewMode(b.id);
   const overdue = live.filter(c => dueState(c) === 'over').length;
   const filtering = boardFilter || labelFilter.size || dueFilter;
-  return `<div class="board-view ${b.background ? 'has-bg c-' + b.background : ''}"><div class="board-head pad phead">
+  return `<div class="board-view mode-${mode} ${b.background ? 'has-bg c-' + b.background : ''}"><div class="board-head pad phead">
       <button class="big-emoji" data-act="emoji" data-target="board" title="Cambiar icono">${glyph(b.emoji || 'lucide:square-kanban:blue')}</button>
       <h1 class="title" contenteditable="plaintext-only" spellcheck="false" data-edit="board-name" data-project="${esc(route.project)}" data-id="${b.id}" data-orig="${esc(b.name)}" data-ph="Tablero sin título">${esc(b.name)}</h1>
       <div class="bar">

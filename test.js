@@ -194,6 +194,19 @@ assert.equal(s.backupIfDue().name, new Date().toISOString().slice(0, 10));
 assert.equal(s.backupIfDue(), null);
 assert.ok(fs.existsSync(path.join(dir, 'backups', s.listBackups()[0], 'projects', 'Acme', 'project.json')));
 
+// Plantillas de tablero (columnas y etiquetas propias, o vacío) y portada completa
+const empty = s.createBoard('Acme', { name: 'En blanco', columns: [] });
+assert.equal(empty.columns.length, 0);
+const sized = s.createBoard('Acme', { name: 'Tallas', labels: [{ name: 'Pequeña', color: 'green' }, { name: 'Grande', color: 'nope' }] });
+assert.deepEqual(sized.labels.map(l => `${l.name}:${l.color}`), ['Pequeña:green', 'Grande:gray']);
+const fc = s.createCard('Acme', 'Tallas', { title: 'Portada', cover: 'red' }).card;
+s.updateCard(fc.id, { coverSize: 'full' });
+assert.equal(s.getBoard('Acme', 'Tallas').cards[0].coverSize, 'full');
+s.updateCard(fc.id, { coverSize: 'top' });
+assert.equal(s.getBoard('Acme', 'Tallas').cards[0].coverSize, undefined);
+s.addAttachment(fc.id, { name: 'foto.png', base64: Buffer.from('png').toString('base64'), cover: true });
+assert.match(s.getBoard('Acme', 'Tallas').cards[0].cover, /^img:/);
+
 // Proyecto de ejemplo del primer arranque: se crea entero y sus enlaces apuntan a páginas que existen
 (await import('./ejemplo.js')).seedExample();
 const demo = s.getBoard('Bienvenida', 'Primeros pasos');

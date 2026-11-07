@@ -5,13 +5,42 @@ async function newProject() {
   focusTitleNext = true;
   go({ type: 'project', project: name });
 }
-async function newBoard(project) {
-  const p = proj(project);
-  const b = await call('createBoard', project, { name: uniqueName('Tablero sin título', p.boards.map(b => b.name)) });
-  collapsedProjects.delete(project);
-  focusTitleNext = true;
-  go({ type: 'board', project, id: b.id });
+// Plantillas de «Nuevo tablero»: columnas y etiquetas con las que nace (Vacío = sin nada, lo montas tú)
+const BOARD_TEMPLATES = [
+  { id: 'empty', name: 'Vacío', desc: 'Sin columnas ni etiquetas.', icon: 'square-dashed', columns: [], labels: [] },
+  { id: 'todo', name: 'Tareas', desc: 'Por hacer, en curso y hecho.', icon: 'list-todo', columns: ['Por hacer', 'En curso', 'Hecho'], labels: [] },
+  { id: 'size', name: 'Tareas con tamaño', desc: 'Etiquetas para lo que cuesta cada tarea.', icon: 'ruler', columns: ['Por hacer', 'En curso', 'Hecho'],
+    labels: [['Pequeña', 'green'], ['Mediana', 'yellow'], ['Grande', 'red']] },
+  { id: 'sprint', name: 'Sprint', desc: 'Del backlog a hecho, pasando por revisión.', icon: 'rocket', columns: ['Backlog', 'Por hacer', 'En curso', 'En revisión', 'Hecho'],
+    labels: [['Bug', 'red'], ['Mejora', 'blue'], ['Urgente', 'orange']] },
+  { id: 'content', name: 'Contenido', desc: 'De la idea a publicado.', icon: 'pen-line', columns: ['Ideas', 'Escribiendo', 'Revisión', 'Publicado'],
+    labels: [['Blog', 'purple'], ['Redes', 'pink'], ['Vídeo', 'orange']] },
+];
+const PREVIEW_COLORS = ['gray', 'blue', 'green', 'orange', 'purple'];
+let nbProject = null, nbTemplate = 'todo';
+function drawTemplates() {
+  $('#nb-templates').innerHTML = BOARD_TEMPLATES.map(t => `<button type="button" class="nb-tpl ${t.id === nbTemplate ? 'on' : ''}" role="radio" aria-checked="${t.id === nbTemplate}" data-tpl="${t.id}">
+    <span class="nb-prev">${t.columns.length ? t.columns.map((_, i) => `<i class="c-${PREVIEW_COLORS[i % PREVIEW_COLORS.length]}" style="height:${[70, 50, 34, 58, 42][i]}%"></i>`).join('') : icon('plus')}</span>
+    <b>${icon(t.icon, 'sm')}${t.name}</b><span class="muted">${t.desc}</span>
+    ${t.labels.length ? `<span class="labels">${t.labels.map(([n, c]) => `<span class="tag c-${c}">${n}</span>`).join('')}</span>` : ''}</button>`).join('');
 }
+function newBoard(project) {
+  nbProject = project;
+  $('#nb-name').value = uniqueName('Tablero sin título', proj(project).boards.map(b => b.name));
+  drawTemplates();
+  $('#new-board').showModal();
+  $('#nb-name').select();
+}
+$('#nb-templates').addEventListener('click', e => { const b = e.target.closest('[data-tpl]'); if (b) { nbTemplate = b.dataset.tpl; drawTemplates(); } });
+$('#nb-templates').addEventListener('dblclick', e => { if (e.target.closest('[data-tpl]')) $('#new-board form').requestSubmit(); });
+$('#new-board').addEventListener('click', e => { if (e.target.id === 'new-board' || e.target.closest('[data-close]')) $('#new-board').close(); });
+$('#new-board form').addEventListener('submit', async () => {
+  const t = BOARD_TEMPLATES.find(x => x.id === nbTemplate), project = nbProject;
+  const p = proj(project), name = $('#nb-name').value.trim() || uniqueName('Tablero sin título', p.boards.map(b => b.name));
+  const b = await call('createBoard', project, { name, columns: t.columns, labels: t.labels.map(([n, color]) => ({ name: n, color })) });
+  collapsedProjects.delete(project);
+  go({ type: 'board', project, id: b.id });
+});
 async function newPage(project, parent = '') {
   await flushRte(); // lo que estabas escribiendo en la página padre se guarda antes de añadirle el enlace
   const r = await call('createPage', project, { parent, linkInParent: !!parent });

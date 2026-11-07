@@ -328,6 +328,30 @@ await step('Ajustes: tema oscuro y vuelta al del sistema', async () => {
   assert.equal(s.getSettings().theme, 'system');
 });
 
+await step('Nuevo tablero con plantilla «Tareas con tamaño»: nace con sus columnas y etiquetas', async () => {
+  await win.locator('#tree [data-kind="project"]', { hasText: 'Otro' }).click({ button: 'right' });
+  await win.locator('#pop .opt', { hasText: 'Nuevo tablero' }).click();
+  await win.locator('#new-board[open] [data-tpl="size"]').click();
+  await win.locator('#nb-name').fill('Con tamaño');
+  await win.locator('#new-board button[value="ok"]').click();
+  await main.locator('.board-head .title', { hasText: 'Con tamaño' }).waitFor();
+  const nb = s.getBoard('Otro', 'Con tamaño');
+  assert.deepEqual(nb.columns.map(c => c.name), ['Por hacer', 'En curso', 'Hecho']);
+  assert.deepEqual(nb.labels.map(l => l.name), ['Pequeña', 'Mediana', 'Grande']);
+});
+
+await step('Portada desde el menú de la tarjeta: color y tamaño completo', async () => {
+  const id = s.createCard('Otro', 'Con tamaño', { title: 'Con portada' }).card.id;
+  await main.locator('.card', { hasText: 'Con portada' }).click({ button: 'right' });
+  await win.locator('#pop .opt', { hasText: 'Portada' }).click();
+  await win.locator('#pop [data-v="color:green"]').click();
+  await win.locator('#pop [data-v="size:full"]').click();
+  await main.locator('.card.full-cover.c-green', { hasText: 'Con portada' }).waitFor();
+  const c = s.getBoard('Otro', 'Con tamaño').cards.find(x => x.id === id);
+  assert.equal(c.cover, 'green'); assert.equal(c.coverSize, 'full');
+  await win.keyboard.press('Escape');
+});
+
 await app.close();
 fs.rmSync(dir, { recursive: true, force: true });
 console.log(`\nOK: ${n} pruebas de interfaz`);

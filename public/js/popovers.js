@@ -99,11 +99,43 @@ function docsPicker(anchor) {
   });
 }
 
-function coverPicker(anchor) {
-  const c = currentCard();
+// Portada de la tarjeta: tamaño (franja arriba o tarjeta completa), color, imagen nueva o una imagen ya adjunta
+function coverPicker(anchor, card = currentCard()) {
+  const id = card.id, cur = () => board.cards.find(c => c.id === id);
+  const pickImage = () => {
+    const input = Object.assign(document.createElement('input'), { type: 'file', accept: 'image/*' });
+    input.onchange = async () => {
+      const f = input.files[0];
+      if (!f) return;
+      if (f.size > 25 * 1024 * 1024) return toast(`«${f.name}» pasa de 25 MB`, true);
+      await act('addAttachment', id, { name: f.name, base64: await readB64(f), cover: true });
+    };
+    input.click();
+  };
   openPop(anchor, {
-    list: () => `<div class="pop-label">Portada</div>${colorOpts(c.cover)}${c.cover ? `<div class="pop-sep"></div><button class="opt danger" data-v="none">${icon('x', 'sm')}<span class="grow">Quitar portada</span></button>` : ''}`,
-    pick: async v => { closePop(); await act('updateCard', c.id, { cover: v === 'none' ? null : v.slice(6) }); },
+    list: () => {
+      const c = cur(), full = c.coverSize === 'full';
+      const imgs = (c.attachments ?? []).filter(a => a.file && /\.(png|jpe?g|gif|webp)$/i.test(a.file));
+      return `<div class="pop-label">Tamaño</div>
+        <div class="cover-sizes"><button class="${full ? '' : 'on'}" data-v="size:top" aria-pressed="${!full}"><span class="cs-top"></span>Arriba</button>
+          <button class="${full ? 'on' : ''}" data-v="size:full" aria-pressed="${full}"><span class="cs-full"></span>Completa</button></div>
+        <div class="pop-label">Colores</div>${colorOpts(c.cover)}
+        <div class="pop-label">Imagen</div>
+        ${imgs.length ? `<div class="cover-imgs">${imgs.map(a => `<button class="${c.cover === 'img:' + a.id ? 'on' : ''}" data-v="img:${a.id}" title="${esc(a.name)}"><img src="${assetUrl(route.project, a.file)}" alt=""></button>`).join('')}</div>` : ''}
+        <button class="opt" data-v="upload">${icon('image-up', 'sm')}<span class="grow">Subir imagen…</span></button>
+        ${c.cover ? `<div class="pop-sep"></div><button class="opt danger" data-v="none">${icon('x', 'sm')}<span class="grow">Quitar portada</span></button>` : ''}`;
+    },
+    pick: async v => {
+      if (v === 'upload') { closePop(); return pickImage(); }
+      if (v.startsWith('size:')) {
+        const c = cur(), patch = { coverSize: v.slice(5) };
+        if (!c.cover) patch.cover = 'blue'; // elegir tamaño sin portada pone una de color para que se vea
+        await act('updateCard', id, patch);
+        return drawPop();
+      }
+      await act('updateCard', id, v === 'none' ? { cover: null, coverSize: 'top' } : { cover: v.startsWith('img:') ? v : v.slice(6) });
+      drawPop();
+    },
   });
 }
 
