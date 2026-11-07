@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Taskvia a 16-48 px: el mismo dibujo; es grueso y se lee igual de pequeño -->
+  <rect width="256" height="256" rx="58" fill="#1f1e1c"/>
+  <rect x="44" y="48" width="168" height="36" rx="13" fill="#f4f1ea"/>
+  <rect x="58" y="98" width="38" height="56" rx="11" fill="#5b8def"/>
+  <rect x="109" y="98" width="38" height="112" rx="11" fill="#f4f1ea"/>
+  <rect x="160" y="98" width="38" height="80" rx="11" fill="#5fb072"/>
+</svg>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taskvia</title>
+<link rel="icon" href="/icon-small.svg" type="image/svg+xml">
+<script src="/marked.js"></script>
+<script src="/turndown.js"></script>
+<script src="/turndown-gfm.js"></script>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<!--
+THESIS: un espacio de trabajo local donde cada proyecto es un documento que contiene tableros kanban; rechaza el "dos pestañas y un formulario" por un shell de app de escritorio con barra lateral, migas y vista lateral de la tarjeta.
+OWN-WORLD: documento sobrio (Segoe UI, blancos y grises cálidos #37352f / #f8f8f7, filas de 28px, propiedades en tabla, icono de página) + kanban de color (columnas teñidas, tarjetas con portada y etiquetas de 9 colores). Iconos Lucide de 1.75px.
+STORY: abre la app, ve sus proyectos en la barra lateral, entra a un tablero, arrastra tarjetas, abre una en vista lateral para ver contexto y checklist, salta a la documentación enlazada; mientras, la IA edita lo mismo por MCP y todo se refresca solo.
+FIRST VIEWPORT: barra lateral 248px (logo, Buscar Ctrl+K, árbol de proyectos con tableros y páginas) | barra superior 44px con migas y controles de ventana | tablero: icono 48px, título 32px, barra de vista con filtro, columnas de 272px.
+FORM: fijado por el brief (documentos + kanban), sin tirada de concepto.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->
+<aside id="sb">
+  <div class="sb-head drag">
+    <img class="ws-logo" src="/icon-small.svg" alt="" width="22" height="22">
+    <b>Taskvia</b>
+    <button class="ib" data-act="sidebar" title="Ocultar barra lateral (Ctrl+\)"><svg class="i"><use href="/icons.svg#panel-left-close"/></svg></button>
+  </div>
+  <button class="sb-row" data-act="find"><svg class="i"><use href="/icons.svg#search"/></svg>Buscar<kbd>Ctrl K</kbd></button>
+  <button class="sb-row" data-act="home"><svg class="i"><use href="/icons.svg#house"/></svg>Inicio</button>
+  <button class="sb-row" data-act="settings"><svg class="i"><use href="/icons.svg#settings"/></svg>Ajustes<kbd>Ctrl ,</kbd></button>
+  <div id="sb-scroll">
+    <div id="favs" hidden><div class="sb-sec"><span>Favoritos</span></div><nav id="fav-list" aria-label="Favoritos"></nav></div>
+    <div class="sb-sec"><span>Proyectos</span><button class="ib" data-act="new-project" title="Nuevo proyecto"><svg class="i sm"><use href="/icons.svg#plus"/></svg></button></div>
+    <nav id="tree" aria-label="Proyectos"></nav>
+  </div>
+  <button class="sb-row" data-act="trash"><svg class="i"><use href="/icons.svg#trash"/></svg>Papelera</button>
+  <button class="sb-row sb-foot" data-act="new-project"><svg class="i"><use href="/icons.svg#plus"/></svg>Nuevo proyecto</button>
+  <div id="sb-resize" role="separator" aria-orientation="vertical" aria-label="Ancho de la barra lateral" title="Arrastra para cambiar el ancho · doble clic para restablecer"></div>
+</aside>
+
+<div id="app">
+  <header id="top" class="drag">
+    <button class="ib" data-act="sidebar" id="sb-open" title="Mostrar barra lateral (Ctrl+\)" hidden><svg class="i"><use href="/icons.svg#panel-left-open"/></svg></button>
+    <button class="ib" data-act="back" title="Atrás (Alt+←)"><svg class="i"><use href="/icons.svg#arrow-left"/></svg></button>
+    <button class="ib" data-act="forward" title="Adelante (Alt+→)"><svg class="i"><use href="/icons.svg#arrow-right"/></svg></button>
+    <nav id="crumbs" aria-label="Ubicación"></nav>
+    <div class="grow"></div>
+    <span id="status"></span>
+    <button class="ib" data-act="fav" id="fav-btn" title="Añadir a favoritos" aria-pressed="false" hidden><svg class="i"><use href="/icons.svg#star"/></svg></button>
+    <button class="ib" data-act="view-menu" id="view-menu" title="Más opciones" hidden><svg class="i"><use href="/icons.svg#ellipsis"/></svg></button>
+  </header>
+  <main id="main"></main>
+</div>
+
+<aside id="peek" hidden aria-label="Tarjeta"></aside>
+<div id="pop" popover></div>
+<dialog id="finder" aria-label="Buscar">
+  <div class="finder-in"><svg class="i"><use href="/icons.svg#search"/></svg><input id="finder-q" placeholder="Busca tableros, páginas o tarjetas…" autocomplete="off"><kbd>Esc</kbd></div>
+  <div id="finder-list"></div>
+</dialog>
+<dialog id="settings" class="sheet" aria-labelledby="settings-title">
+  <header><h2 id="settings-title">Ajustes</h2><button class="ib" data-close title="Cerrar (Esc)"><svg class="i"><use href="/icons.svg#x"/></svg></button></header>
+  <div id="settings-body"></div>
+</dialog>
+<dialog id="confirm" class="sheet" aria-labelledby="confirm-title">
+  <h2 id="confirm-title"></h2><p id="confirm-text"></p>
+  <div class="confirm-actions"><button class="btn ghost" value="cancel">Cancelar</button><button class="btn solid-danger" value="ok">Eliminar</button></div>
+</dialog>
+<dialog id="keys" class="sheet" aria-labelledby="keys-title">
+  <header><h2 id="keys-title">Atajos de teclado</h2><button class="ib" data-close-keys title="Cerrar (Esc)"><svg class="i"><use href="/icons.svg#x"/></svg></button></header>
+  <div class="keys-body">
+    <section><h3>En cualquier sitio</h3>
+      <dl><dt><kbd>Ctrl</kbd><kbd>K</kbd></dt><dd>Buscar</dd><dt><kbd>Ctrl</kbd><kbd>,</kbd></dt><dd>Ajustes</dd><dt><kbd>[</kbd></dt><dd>Mostrar u ocultar la barra lateral</dd>
+      <dt><kbd>Alt</kbd><kbd>←</kbd> <kbd>→</kbd></dt><dd>Atrás y adelante</dd><dt><kbd>?</kbd></dt><dd>Esta ayuda</dd></dl></section>
+    <section><h3>En un tablero</h3>
+      <dl><dt><kbd>N</kbd></dt><dd>Nueva tarjeta (en la columna bajo el ratón)</dd><dt><kbd>F</kbd></dt><dd>Filtrar tarjetas</dd>
+      <dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>Vista tablero, lista o calendario</dd></dl></section>
+    <section><h3>Sobre una tarjeta (con el ratón encima o abierta)</h3>
+      <dl><dt><kbd>E</kbd> <kbd>Enter</kbd></dt><dd>Abrir</dd><dt><kbd>D</kbd></dt><dd>Fechas</dd><dt><kbd>L</kbd></dt><dd>Etiquetas</dd><dt><kbd>M</kbd></dt><dd>Mover a otro tablero</dd>
+      <dt><kbd>C</kbd></dt><dd>Archivar</dd><dt><kbd>Supr</kbd></dt><dd>Mover a la papelera</dd></dl></section>
+    <section><h3>Escribiendo</h3>
+      <dl><dt><kbd>/</kbd></dt><dd>Insertar bloque o subpágina</dd><dt><kbd>[</kbd><kbd>[</kbd></dt><dd>Enlazar otra página</dd><dt><kbd>Ctrl</kbd><kbd>B</kbd> <kbd>I</kbd></dt><dd>Negrita, cursiva</dd>
+      <dt><kbd>#</kbd> <kbd>-</kbd> <kbd>[]</kbd> <kbd>&gt;</kbd></dt><dd>Al empezar una línea: título, lista, tarea, cita</dd><dt><kbd>Esc</kbd></dt><dd>Salir del editor</dd></dl></section>
+  </div>
+</dialog>
+<div id="toast" popover="manual"></div>
+
+<script src="/js/util.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/sidebar.js"></script>
+<script src="/js/views.js"></script>
+<script src="/js/board.js"></script>
+<script src="/js/peek.js"></script>
+<script src="/js/popovers.js"></script>
+<script src="/js/menus.js"></script>
+<script src="/js/settings.js"></script>
+<script src="/js/editor.js"></script>
+<script src="/js/extras.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

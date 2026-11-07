@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Taskvia: una T cuyo palo es la columna central de un tablero, entre una azul y una verde -->
+  <rect width="256" height="256" rx="58" fill="#1f1e1c"/>
+  <rect x="44" y="48" width="168" height="36" rx="13" fill="#f4f1ea"/>
+  <rect x="58" y="98" width="38" height="56" rx="11" fill="#5b8def"/>
+  <rect x="109" y="98" width="38" height="112" rx="11" fill="#f4f1ea"/>
+  <rect x="160" y="98" width="38" height="80" rx="11" fill="#5fb072"/>
+</svg>
