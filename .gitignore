@@ -1,0 +1,8 @@
+node_modules/
+dist/
+# Datos personales (las versiones antiguas los guardaban aquí; ahora van a la carpeta de datos del usuario)
+data/
+# Capturas de las revisiones de diseño
+.impeccable/review/
+*.log
+.impeccable/hook.cache.json
