@@ -43,22 +43,29 @@ function renderSettings() {
 }
 // Estado de la actualización que manda Electron: idle, checking, none, downloading, ready, error (dev = desde el código)
 let update = { state: 'dev' };
+const mb = n => n ? ` (${Math.round(n / 1048576)} MB)` : '';
 function updateRow() {
   const u = update, busy = ['checking', 'downloading'].includes(u.state);
   const help = {
-    dev: 'Desde el código: se actualiza con git pull.', idle: 'Busca versiones nuevas cada vez que abres la app.',
-    checking: 'Buscando…', none: 'Tienes la última versión.', downloading: `Descargando la ${esc(u.version)}… ${u.percent || 0}%`,
-    ready: `La ${esc(u.version)} está lista. Se instala al cerrar la app, o ahora si reinicias.`, error: `No se pudo comprobar: ${esc(u.message)}`,
+    dev: 'Desde el código: se actualiza con git pull.', idle: 'Comprueba si hay versión nueva al abrir la app y cada 4 horas; solo descarga si se lo pides.',
+    checking: 'Buscando…', none: 'Tienes la última versión.', available: `Hay una versión nueva: la ${esc(u.version)}${mb(u.size)}.`,
+    downloading: `Descargando la ${esc(u.version)}… ${u.percent || 0}%`,
+    ready: `La ${esc(u.version)} está descargada. Al reiniciar se instala sola y Taskvia vuelve a abrirse.`, error: `No se pudo comprobar: ${esc(u.message)}`,
   }[u.state];
-  const btn = u.state === 'dev' ? '' : u.state === 'ready'
-    ? `<button class="btn primary" data-update-install>${icon('rotate-cw', 'sm')}Reiniciar y actualizar</button>`
+  const btn = u.state === 'dev' ? ''
+    : u.state === 'ready' ? `<button class="btn primary" data-update-install>${icon('rotate-cw', 'sm')}Reiniciar y actualizar</button>`
+    : u.state === 'available' ? `<button class="btn primary" data-update-download>${icon('download', 'sm')}Descargar</button>`
     : `<button class="btn ghost" data-update-check ${busy ? 'disabled' : ''}>${icon('refresh-cw', 'sm')}Buscar actualizaciones</button>`;
   return row(`Versión ${esc(u.current || '')}`, help, btn);
 }
+let toldVersion = null; // el aviso de versión nueva sale una vez por versión, no cada 4 h
 window.desktop?.onUpdate(async u => {
   update = { ...update, ...u };
   if ($('#settings').open) renderSettings();
-  if (u.state === 'ready') toast(`La versión ${u.version} está lista`, false, { label: 'Reiniciar', run: () => window.desktop.installUpdate() });
+  if (u.state === 'available' && u.version !== toldVersion) {
+    toldVersion = u.version;
+    toast(`Taskvia ${u.version} disponible`, false, { label: 'Ver', run: openSettings });
+  }
 });
 async function openSettings() {
   settings.lastBackup = (await call('listBackups'))[0];
@@ -70,6 +77,7 @@ $('#settings').addEventListener('click', async e => {
   if (e.target.closest('[data-open-data]')) return window.desktop?.openDataDir();
   if (e.target.closest('[data-open-backups]')) return window.desktop?.openBackups();
   if (e.target.closest('[data-update-check]')) return window.desktop.checkUpdate();
+  if (e.target.closest('[data-update-download]')) return window.desktop.downloadUpdate();
   if (e.target.closest('[data-update-install]')) return window.desktop.installUpdate();
   if (e.target.closest('[data-mcp-config]')) return copyText(await window.desktop.mcpConfig(), 'Configuración copiada. Pégala en tu asistente de IA');
   if (e.target.closest('[data-backup-now]')) {

@@ -2,7 +2,7 @@
 // botones nativos de Windows superpuestos sobre la barra superior de la app.
 import { app, BrowserWindow, Menu, ipcMain, nativeTheme, shell } from 'electron';
 import path from 'node:path';
-import updater from 'electron-updater';
+import * as updater from './updater.js';
 import { URL, ready } from './ui.js';
 import { DATA_DIR, assetPath, backupIfDue, getSettings, firstRun } from './store.js';
 import { seedExample } from './ejemplo.js';
@@ -37,21 +37,32 @@ ipcMain.handle('mcp-config', () => {
   return JSON.stringify({ mcpServers: { taskvia: server } }, null, 2);
 });
 
-// Actualizaciones (solo con la app instalada): busca al abrir y con el botón de Ajustes, descarga sola
-// y se instala al cerrar o al pulsar «Reiniciar». La UI recibe cada cambio de estado.
-const { autoUpdater } = updater;
+// Actualizaciones (solo con la app instalada), como en Moorage: comprobar es automático (al abrir y cada 4 h) y
+// barato; la descarga solo cuando la pides en Ajustes, y el instalador se ejecuta en silencio al reiniciar.
+// Estados: dev, idle, checking, none, available, downloading, ready, error. La UI recibe cada cambio.
 let win, update = { state: app.isPackaged ? 'idle' : 'dev' };
 const setUpdate = u => { update = u; win?.webContents.send('update', u); };
-autoUpdater.on('checking-for-update', () => setUpdate({ state: 'checking' }));
-autoUpdater.on('update-not-available', () => setUpdate({ state: 'none' }));
-autoUpdater.on('update-available', i => setUpdate({ state: 'downloading', version: i.version, percent: 0 }));
-autoUpdater.on('download-progress', p => setUpdate({ ...update, state: 'downloading', percent: Math.round(p.percent) }));
-autoUpdater.on('update-downloaded', i => setUpdate({ state: 'ready', version: i.version }));
-autoUpdater.on('error', e => setUpdate({ state: 'error', message: String(e.message || e).split('\n')[0].slice(0, 140) }));
-const checkUpdate = () => { if (app.isPackaged && !['checking', 'downloading', 'ready'].includes(update.state)) autoUpdater.checkForUpdates().catch(() => {}); };
+async function checkUpdate() {
+  if (!app.isPackaged || ['checking', 'downloading', 'ready'].includes(update.state)) return;
+  setUpdate({ state: 'checking' });
+  const r = await updater.checkUpdate();
+  setUpdate(r.error ? { state: 'error', message: r.error } : r.newer ? { state: r.downloaded ? 'ready' : 'available', version: r.version, size: r.size } : { state: 'none' });
+}
+async function downloadUpdate() {
+  if (update.state !== 'available') return;
+  const { version, size } = update;
+  setUpdate({ state: 'downloading', version, size, percent: 0 });
+  const r = await updater.downloadUpdate((got, total) => setUpdate({ state: 'downloading', version, size, percent: total ? Math.round(got / total * 100) : 0 }));
+  setUpdate(r.ok ? { state: 'ready', version } : { state: 'error', message: r.error });
+}
 ipcMain.handle('update-status', () => ({ ...update, current: app.getVersion() }));
 ipcMain.handle('update-check', checkUpdate);
-ipcMain.on('update-install', () => { if (update.state === 'ready') autoUpdater.quitAndInstall(true, true); }); // silencioso y vuelve a abrir la app, sin el asistente del instalador
+ipcMain.handle('update-download', downloadUpdate);
+ipcMain.on('update-install', () => {
+  if (update.state !== 'ready') return;
+  const r = updater.launchInstaller();
+  if (r.ok) app.quit(); else setUpdate({ state: 'error', message: r.error });
+});
 
 // Copia de seguridad diaria de data/ (al abrir y comprobando cada hora; se guardan 14 días).
 const backup = () => { try { backupIfDue(); } catch (e) { console.error('Copia de seguridad fallida:', e.message); } };
@@ -80,7 +91,8 @@ app.whenReady().then(async () => {
       { type: 'separator' }, { role: 'selectAll', label: 'Seleccionar todo' },
     ]).popup();
   });
-  win.webContents.once('did-finish-load', checkUpdate); // sin conexión no pasa nada: queda en «error» y se reintenta otro día
+  setTimeout(checkUpdate, 8000); // sin conexión no pasa nada: queda en «error» y se reintenta a las 4 h
+  setInterval(checkUpdate, 4 * 3600 * 1000);
   win.loadURL(URL);
 });
 app.on('window-all-closed', () => app.quit());

@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('desktop', {
   mcpConfig: () => ipcRenderer.invoke('mcp-config'),
   updateStatus: () => ipcRenderer.invoke('update-status'),
   checkUpdate: () => ipcRenderer.invoke('update-check'),
+  downloadUpdate: () => ipcRenderer.invoke('update-download'),
   installUpdate: () => ipcRenderer.send('update-install'),
   onUpdate: cb => ipcRenderer.on('update', (_, u) => cb(u)),
 });
