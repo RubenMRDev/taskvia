@@ -28,9 +28,10 @@ function renderSettings() {
     <section><h3>Páginas</h3>
       ${row('Tipografía', 'Para el título y el texto de las páginas.', seg('pageFont', [['sans', 'Normal', font('var(--font)')], ['serif', 'Serif', font('var(--serif)')], ['mono', 'Mono', font('var(--mono)')]]))}
       ${row('Ancho', 'Ancho completo aprovecha toda la ventana.', seg('pageWidth', [['normal', 'Normal'], ['full', 'Completo']]))}
-      ${row('Barra de formato', 'Flotante: aparece al seleccionar texto, Fija: siempre arriba, como en Word.', seg('formatBar', [['floating', 'Flotante'], ['fixed', 'Fija']]))}
+      ${row('Barra de formato', 'Flotante: aparece al seleccionar texto. Fija: siempre arriba, como en Word.', seg('formatBar', [['floating', 'Flotante'], ['fixed', 'Fija']]))}
     </section>
     <section><h3>IA</h3>
+      ${window.desktop ? row('Conectar con tu IA', 'Copia la configuración MCP y pégala en tu asistente de IA; después, reinícialo.', `<button class="btn ghost" data-mcp-config>${icon('plug', 'sm')}Copiar configuración</button>`) : ''}
       ${row('Consejos para la IA', 'Muestra en Inicio y en cada proyecto cómo pedirle tareas a tu asistente de IA.', `<button class="switch" role="switch" aria-checked="${settings.aiTips}" aria-label="Consejos para la IA" data-set="aiTips" data-val="${!settings.aiTips}"></button>`)}
     </section>
     <section><h3>Datos</h3>
@@ -44,6 +45,7 @@ $('#settings').addEventListener('click', async e => {
   if (e.target.id === 'settings' || e.target.closest('[data-close]')) return $('#settings').close();
   if (e.target.closest('[data-open-data]')) return window.desktop?.openDataDir();
   if (e.target.closest('[data-open-backups]')) return window.desktop?.openBackups();
+  if (e.target.closest('[data-mcp-config]')) return copyText(await window.desktop.mcpConfig(), 'Configuración copiada. Pégala en tu asistente de IA');
   if (e.target.closest('[data-backup-now]')) {
     settings.lastBackup = (await call('backupNow')).name;
     renderSettings();

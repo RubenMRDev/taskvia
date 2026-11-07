@@ -38,7 +38,11 @@ Taskvia pone en orden las tareas, la documentación y lo que la IA va haciendo e
 
 ## Instalar
 
-Hace falta [Node.js](https://nodejs.org) 22 o superior.
+**Windows:** descarga `Taskvia-Setup-x.y.z.exe` de la [última versión](https://github.com/RubenMRDev/taskvia/releases/latest) y ábrelo. Se actualiza sola cuando sale una versión nueva. Al no estar firmado, Windows puede avisar la primera vez: «Más información» → «Ejecutar de todas formas».
+
+La primera vez se abre con un proyecto de ejemplo, «Bienvenida», que enseña lo básico. Bórralo cuando quieras.
+
+**Desde el código** (cualquier sistema; hace falta [Node.js](https://nodejs.org) 22 o superior):
 
 ```bash
 git clone https://github.com/RubenMRDev/taskvia.git
@@ -51,7 +55,9 @@ Si `npm install` no descarga Electron (npm 11 puede saltarse su script): `node n
 
 ## Conectar con tu IA
 
-Cualquier cliente MCP puede lanzarlo por stdio con `node /ruta/a/taskvia/mcp.js`. En la configuración de tu cliente:
+En la app: **Ajustes → IA → Copiar configuración**, pégala en la configuración MCP de tu asistente y reinícialo. Ya lleva las rutas de tu equipo (con la app instalada no hace falta Node).
+
+A mano, desde el código, cualquier cliente MCP puede lanzarlo por stdio con `node /ruta/a/taskvia/mcp.js`:
 
 ```json
 { "mcpServers": { "taskvia": { "command": "node", "args": ["/ruta/a/taskvia/mcp.js"] } } }
@@ -88,11 +94,13 @@ Para restaurar una copia: cierra la app y copia `backups/<fecha>/projects` sobre
 | `store.js` | Todos los datos en disco |
 | `mcp.js` | Servidor MCP |
 | `ui.js` | Servidor local de la interfaz (`TASKVIA_PORT`, 4545 por defecto) |
-| `main.js`, `preload.cjs` | Ventana de Electron, tema nativo, copias diarias |
+| `main.js`, `preload.cjs` | Ventana de Electron, tema nativo, copias diarias, actualizaciones |
+| `ejemplo.js` | Proyecto «Bienvenida» del primer arranque |
 | `public/` | La interfaz: `index.html`, `app.css` y `js/` (`state`, `sidebar`, `views`, `board`, `peek`, `editor`, `extras`, `popovers`, `menus`, `settings`, `app`) |
 | `tools/icono.mjs` | Genera `build/icon.png` e `icon.ico` desde `public/icon.svg` (`npm run icono`) |
 
 - `npm test` — datos y MCP.
+- `npm run dist` — genera el instalador en `dist/`; `npm run release` además lo sube a una release de GitHub (necesita `GH_TOKEN`).
 - `npm run test:ui` — abre la app con datos de prueba y recorre las [historias de usuario](HISTORIAS.md) con ratón y teclado.
 
 ## Licencia

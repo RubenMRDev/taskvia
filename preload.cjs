@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld('desktop', {
   openDataDir: () => ipcRenderer.send('open-data-dir'),
   openBackups: () => ipcRenderer.send('open-backups'),
   openFile: (project, file, reveal = false) => ipcRenderer.send('open-file', project, file, reveal),
+  mcpConfig: () => ipcRenderer.invoke('mcp-config'),
 });

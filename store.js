@@ -22,6 +22,8 @@ const LEGACY_DIRS = [path.join(appData, 'Ordenia', 'datos'), path.join(appData, 
 const legacy = !customDir && !fs.existsSync(path.join(DATA_DIR, 'projects')) && LEGACY_DIRS.find(d => fs.existsSync(path.join(d, 'projects')));
 if (legacy) fs.cpSync(legacy, DATA_DIR, { recursive: true });
 const ROOT = path.join(DATA_DIR, 'projects');
+// Primera vez de verdad (ni datos ni versión anterior): la app crea el proyecto de ejemplo.
+export const firstRun = !customDir && !fs.existsSync(ROOT);
 const TRASH = path.join(DATA_DIR, 'trash');
 const BACKUPS = path.join(DATA_DIR, 'backups');
 const SETTINGS = path.join(DATA_DIR, 'settings.json');

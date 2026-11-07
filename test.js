@@ -194,6 +194,13 @@ assert.equal(s.backupIfDue().name, new Date().toISOString().slice(0, 10));
 assert.equal(s.backupIfDue(), null);
 assert.ok(fs.existsSync(path.join(dir, 'backups', s.listBackups()[0], 'projects', 'Acme', 'project.json')));
 
+// Proyecto de ejemplo del primer arranque: se crea entero y sus enlaces apuntan a páginas que existen
+(await import('./ejemplo.js')).seedExample();
+const demo = s.getBoard('Bienvenida', 'Primeros pasos');
+assert.equal(demo.cards.length, 6);
+assert.ok(demo.cards.flatMap(c => c.docs).every(d => s.readPage('Bienvenida', d)));
+assert.match(s.readPage('Bienvenida', 'Léeme').content, /\[\[Trabajar con la IA\]\]/);
+
 await client.close();
 fs.rmSync(dir, { recursive: true });
 console.log('OK');
