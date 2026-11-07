@@ -1,7 +1,7 @@
 {
   "name": "taskvia",
   "productName": "Taskvia",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Tus proyectos en local: tableros kanban y documentación en markdown, con un servidor MCP para trabajar con tu asistente de IA.",
   "main": "main.js",
   "scripts": {

@@ -51,7 +51,7 @@ autoUpdater.on('error', e => setUpdate({ state: 'error', message: String(e.messa
 const checkUpdate = () => { if (app.isPackaged && !['checking', 'downloading', 'ready'].includes(update.state)) autoUpdater.checkForUpdates().catch(() => {}); };
 ipcMain.handle('update-status', () => ({ ...update, current: app.getVersion() }));
 ipcMain.handle('update-check', checkUpdate);
-ipcMain.on('update-install', () => { if (update.state === 'ready') autoUpdater.quitAndInstall(); });
+ipcMain.on('update-install', () => { if (update.state === 'ready') autoUpdater.quitAndInstall(true, true); }); // silencioso y vuelve a abrir la app, sin el asistente del instalador
 
 // Copia de seguridad diaria de data/ (al abrir y comprobando cada hora; se guardan 14 días).
 const backup = () => { try { backupIfDue(); } catch (e) { console.error('Copia de seguridad fallida:', e.message); } };
