@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "public/js/editor.js"
+        ],
+        "createdAt": "2026-11-07T13:39:45.857Z",
+        "reason": "editor.js no tiene <img> reales; la línea marcada es la regex que reescribe src=\" assets/...\\ a /asset/<proyecto>/ al pintar markdown"
+      }
+    ]
+  }
+}

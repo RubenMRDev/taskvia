@@ -1,0 +1,989 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T14:45:16.507Z",
+  "title": "Design System: Taskvia",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Lienzo",
+        "canonical": "#ffffff",
+        "dark": "#191919",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "sidebar-paper": {
+        "role": "neutral",
+        "displayName": "Papel de barra lateral",
+        "canonical": "#f8f8f7",
+        "dark": "#202020",
+        "tonalRamp": [
+          "oklch(15% 0.001 106.4)",
+          "oklch(26% 0.001 106.4)",
+          "oklch(37% 0.001 106.4)",
+          "oklch(48% 0.001 106.4)",
+          "oklch(59% 0.001 106.4)",
+          "oklch(70% 0.001 106.4)",
+          "oklch(82% 0.001 106.4)",
+          "oklch(95% 0.001 106.4)"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Superficie elevada",
+        "canonical": "#ffffff",
+        "dark": "#252525",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Tarjeta",
+        "canonical": "#ffffff",
+        "dark": "#252525",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "card-hover": {
+        "role": "neutral",
+        "displayName": "Tarjeta en hover",
+        "canonical": "#fafaf9",
+        "dark": "#2c2c2c",
+        "tonalRamp": [
+          "oklch(15% 0.001 106.4)",
+          "oklch(26% 0.001 106.4)",
+          "oklch(37% 0.001 106.4)",
+          "oklch(48% 0.001 106.4)",
+          "oklch(59% 0.001 106.4)",
+          "oklch(70% 0.001 106.4)",
+          "oklch(82% 0.001 106.4)",
+          "oklch(95% 0.001 106.4)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#37352f",
+        "dark": "#d4d4d4",
+        "tonalRamp": [
+          "oklch(15% 0.011 91.7)",
+          "oklch(26% 0.011 91.7)",
+          "oklch(37% 0.011 91.7)",
+          "oklch(48% 0.011 91.7)",
+          "oklch(59% 0.011 91.7)",
+          "oklch(70% 0.011 91.7)",
+          "oklch(82% 0.011 91.7)",
+          "oklch(95% 0.004 91.7)"
+        ]
+      },
+      "ink-secondary": {
+        "role": "neutral",
+        "displayName": "Tinta secundaria",
+        "canonical": "#73726e",
+        "dark": "#9b9b9b",
+        "tonalRamp": [
+          "oklch(15% 0.006 95.2)",
+          "oklch(26% 0.006 95.2)",
+          "oklch(37% 0.006 95.2)",
+          "oklch(48% 0.006 95.2)",
+          "oklch(59% 0.006 95.2)",
+          "oklch(70% 0.006 95.2)",
+          "oklch(82% 0.006 95.2)",
+          "oklch(95% 0.002 95.2)"
+        ]
+      },
+      "ink-tertiary": {
+        "role": "neutral",
+        "displayName": "Tinta terciaria (suelo de contraste)",
+        "canonical": "#6f6e69",
+        "dark": "#8f8f8f",
+        "tonalRamp": [
+          "oklch(15% 0.008 97.4)",
+          "oklch(26% 0.008 97.4)",
+          "oklch(37% 0.008 97.4)",
+          "oklch(48% 0.008 97.4)",
+          "oklch(59% 0.008 97.4)",
+          "oklch(70% 0.008 97.4)",
+          "oklch(82% 0.008 97.4)",
+          "oklch(95% 0.003 97.4)"
+        ]
+      },
+      "hover-wash": {
+        "role": "neutral",
+        "displayName": "Lavado de hover",
+        "canonical": "rgba(55,53,47,.06)",
+        "dark": "rgba(255,255,255,.055)"
+      },
+      "active-wash": {
+        "role": "neutral",
+        "displayName": "Lavado activo",
+        "canonical": "rgba(55,53,47,.1)",
+        "dark": "rgba(255,255,255,.09)"
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Línea fina",
+        "canonical": "rgba(55,53,47,.09)",
+        "dark": "rgba(255,255,255,.094)"
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Línea marcada",
+        "canonical": "rgba(55,53,47,.16)",
+        "dark": "rgba(255,255,255,.16)"
+      },
+      "accent-blue": {
+        "role": "primary",
+        "displayName": "Azul acento",
+        "canonical": "#2383e2",
+        "tonalRamp": [
+          "oklch(15% 0.167 252.7)",
+          "oklch(26% 0.167 252.7)",
+          "oklch(37% 0.167 252.7)",
+          "oklch(48% 0.167 252.7)",
+          "oklch(59% 0.167 252.7)",
+          "oklch(70% 0.167 252.7)",
+          "oklch(82% 0.167 252.7)",
+          "oklch(95% 0.067 252.7)"
+        ]
+      },
+      "accent-blue-deep": {
+        "role": "primary",
+        "displayName": "Azul acento profundo",
+        "canonical": "#0077d4",
+        "tonalRamp": [
+          "oklch(15% 0.168 251.7)",
+          "oklch(26% 0.168 251.7)",
+          "oklch(37% 0.168 251.7)",
+          "oklch(48% 0.168 251.7)",
+          "oklch(59% 0.168 251.7)",
+          "oklch(70% 0.168 251.7)",
+          "oklch(82% 0.168 251.7)",
+          "oklch(95% 0.067 251.7)"
+        ]
+      },
+      "on-accent": {
+        "role": "neutral",
+        "displayName": "Texto sobre acento",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "Halo azul",
+        "canonical": "rgba(35,131,226,.14)",
+        "dark": "rgba(35,131,226,.24)"
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Rojo aviso",
+        "canonical": "#d44c47",
+        "dark": "#df5452",
+        "tonalRamp": [
+          "oklch(15% 0.172 25.8)",
+          "oklch(26% 0.172 25.8)",
+          "oklch(37% 0.172 25.8)",
+          "oklch(48% 0.172 25.8)",
+          "oklch(59% 0.172 25.8)",
+          "oklch(70% 0.172 25.8)",
+          "oklch(82% 0.172 25.8)",
+          "oklch(95% 0.069 25.8)"
+        ]
+      },
+      "danger-soft": {
+        "role": "secondary",
+        "displayName": "Rojo suave",
+        "canonical": "rgba(212,76,71,.1)",
+        "dark": "rgba(223,84,82,.14)"
+      },
+      "done-green": {
+        "role": "secondary",
+        "displayName": "Verde hecho",
+        "canonical": "#448361",
+        "dark": "#529e72",
+        "tonalRamp": [
+          "oklch(15% 0.085 158.4)",
+          "oklch(26% 0.085 158.4)",
+          "oklch(37% 0.085 158.4)",
+          "oklch(48% 0.085 158.4)",
+          "oklch(59% 0.085 158.4)",
+          "oklch(70% 0.085 158.4)",
+          "oklch(82% 0.085 158.4)",
+          "oklch(95% 0.034 158.4)"
+        ]
+      },
+      "tag-gray-bg": {
+        "role": "tertiary",
+        "displayName": "Gris: fondo de etiqueta",
+        "canonical": "#e3e2e0",
+        "dark": "#5a5a5a",
+        "tonalRamp": [
+          "oklch(15% 0.003 84.6)",
+          "oklch(26% 0.003 84.6)",
+          "oklch(37% 0.003 84.6)",
+          "oklch(48% 0.003 84.6)",
+          "oklch(59% 0.003 84.6)",
+          "oklch(70% 0.003 84.6)",
+          "oklch(82% 0.003 84.6)",
+          "oklch(95% 0.001 84.6)"
+        ]
+      },
+      "tag-gray-fg": {
+        "role": "tertiary",
+        "displayName": "Gris: texto de etiqueta",
+        "canonical": "#32302c",
+        "dark": "#e8e8e8",
+        "tonalRamp": [
+          "oklch(15% 0.008 84.6)",
+          "oklch(26% 0.008 84.6)",
+          "oklch(37% 0.008 84.6)",
+          "oklch(48% 0.008 84.6)",
+          "oklch(59% 0.008 84.6)",
+          "oklch(70% 0.008 84.6)",
+          "oklch(82% 0.008 84.6)",
+          "oklch(95% 0.003 84.6)"
+        ]
+      },
+      "tag-gray-strong": {
+        "role": "tertiary",
+        "displayName": "Gris: tinta fuerte",
+        "canonical": "#91918e",
+        "dark": "#9b9b9b",
+        "tonalRamp": [
+          "oklch(15% 0.004 106.5)",
+          "oklch(26% 0.004 106.5)",
+          "oklch(37% 0.004 106.5)",
+          "oklch(48% 0.004 106.5)",
+          "oklch(59% 0.004 106.5)",
+          "oklch(70% 0.004 106.5)",
+          "oklch(82% 0.004 106.5)",
+          "oklch(95% 0.002 106.5)"
+        ]
+      },
+      "tag-brown-bg": {
+        "role": "tertiary",
+        "displayName": "Marrón: fondo de etiqueta",
+        "canonical": "#eee0da",
+        "dark": "#603b2c",
+        "tonalRamp": [
+          "oklch(15% 0.017 44.8)",
+          "oklch(26% 0.017 44.8)",
+          "oklch(37% 0.017 44.8)",
+          "oklch(48% 0.017 44.8)",
+          "oklch(59% 0.017 44.8)",
+          "oklch(70% 0.017 44.8)",
+          "oklch(82% 0.017 44.8)",
+          "oklch(95% 0.007 44.8)"
+        ]
+      },
+      "tag-brown-fg": {
+        "role": "tertiary",
+        "displayName": "Marrón: texto de etiqueta",
+        "canonical": "#442a1e",
+        "dark": "#f0e2db",
+        "tonalRamp": [
+          "oklch(15% 0.044 45.5)",
+          "oklch(26% 0.044 45.5)",
+          "oklch(37% 0.044 45.5)",
+          "oklch(48% 0.044 45.5)",
+          "oklch(59% 0.044 45.5)",
+          "oklch(70% 0.044 45.5)",
+          "oklch(82% 0.044 45.5)",
+          "oklch(95% 0.018 45.5)"
+        ]
+      },
+      "tag-brown-strong": {
+        "role": "tertiary",
+        "displayName": "Marrón: tinta fuerte",
+        "canonical": "#9f6b53",
+        "dark": "#ba856f",
+        "tonalRamp": [
+          "oklch(15% 0.076 45.6)",
+          "oklch(26% 0.076 45.6)",
+          "oklch(37% 0.076 45.6)",
+          "oklch(48% 0.076 45.6)",
+          "oklch(59% 0.076 45.6)",
+          "oklch(70% 0.076 45.6)",
+          "oklch(82% 0.076 45.6)",
+          "oklch(95% 0.030 45.6)"
+        ]
+      },
+      "tag-orange-bg": {
+        "role": "tertiary",
+        "displayName": "Naranja: fondo de etiqueta",
+        "canonical": "#fadec9",
+        "dark": "#854c1d",
+        "tonalRamp": [
+          "oklch(15% 0.042 59.1)",
+          "oklch(26% 0.042 59.1)",
+          "oklch(37% 0.042 59.1)",
+          "oklch(48% 0.042 59.1)",
+          "oklch(59% 0.042 59.1)",
+          "oklch(70% 0.042 59.1)",
+          "oklch(82% 0.042 59.1)",
+          "oklch(95% 0.017 59.1)"
+        ]
+      },
+      "tag-orange-fg": {
+        "role": "tertiary",
+        "displayName": "Naranja: texto de etiqueta",
+        "canonical": "#49290e",
+        "dark": "#fbe6d6",
+        "tonalRamp": [
+          "oklch(15% 0.062 57.7)",
+          "oklch(26% 0.062 57.7)",
+          "oklch(37% 0.062 57.7)",
+          "oklch(48% 0.062 57.7)",
+          "oklch(59% 0.062 57.7)",
+          "oklch(70% 0.062 57.7)",
+          "oklch(82% 0.062 57.7)",
+          "oklch(95% 0.025 57.7)"
+        ]
+      },
+      "tag-orange-strong": {
+        "role": "tertiary",
+        "displayName": "Naranja: tinta fuerte",
+        "canonical": "#d9730d",
+        "dark": "#c77d48",
+        "tonalRamp": [
+          "oklch(15% 0.159 55.7)",
+          "oklch(26% 0.159 55.7)",
+          "oklch(37% 0.159 55.7)",
+          "oklch(48% 0.159 55.7)",
+          "oklch(59% 0.159 55.7)",
+          "oklch(70% 0.159 55.7)",
+          "oklch(82% 0.159 55.7)",
+          "oklch(95% 0.063 55.7)"
+        ]
+      },
+      "tag-yellow-bg": {
+        "role": "tertiary",
+        "displayName": "Amarillo: fondo de etiqueta",
+        "canonical": "#fdecc8",
+        "dark": "#89632a",
+        "tonalRamp": [
+          "oklch(15% 0.050 85.7)",
+          "oklch(26% 0.050 85.7)",
+          "oklch(37% 0.050 85.7)",
+          "oklch(48% 0.050 85.7)",
+          "oklch(59% 0.050 85.7)",
+          "oklch(70% 0.050 85.7)",
+          "oklch(82% 0.050 85.7)",
+          "oklch(95% 0.020 85.7)"
+        ]
+      },
+      "tag-yellow-fg": {
+        "role": "tertiary",
+        "displayName": "Amarillo: texto de etiqueta",
+        "canonical": "#402c1b",
+        "dark": "#fcefd4",
+        "tonalRamp": [
+          "oklch(15% 0.041 60.9)",
+          "oklch(26% 0.041 60.9)",
+          "oklch(37% 0.041 60.9)",
+          "oklch(48% 0.041 60.9)",
+          "oklch(59% 0.041 60.9)",
+          "oklch(70% 0.041 60.9)",
+          "oklch(82% 0.041 60.9)",
+          "oklch(95% 0.016 60.9)"
+        ]
+      },
+      "tag-yellow-strong": {
+        "role": "tertiary",
+        "displayName": "Amarillo: tinta fuerte",
+        "canonical": "#cb912f",
+        "dark": "#ca984d",
+        "tonalRamp": [
+          "oklch(15% 0.130 76.0)",
+          "oklch(26% 0.130 76.0)",
+          "oklch(37% 0.130 76.0)",
+          "oklch(48% 0.130 76.0)",
+          "oklch(59% 0.130 76.0)",
+          "oklch(70% 0.130 76.0)",
+          "oklch(82% 0.130 76.0)",
+          "oklch(95% 0.052 76.0)"
+        ]
+      },
+      "tag-green-bg": {
+        "role": "tertiary",
+        "displayName": "Verde: fondo de etiqueta",
+        "canonical": "#dbeddb",
+        "dark": "#2b593f",
+        "tonalRamp": [
+          "oklch(15% 0.031 145.3)",
+          "oklch(26% 0.031 145.3)",
+          "oklch(37% 0.031 145.3)",
+          "oklch(48% 0.031 145.3)",
+          "oklch(59% 0.031 145.3)",
+          "oklch(70% 0.031 145.3)",
+          "oklch(82% 0.031 145.3)",
+          "oklch(95% 0.012 145.3)"
+        ]
+      },
+      "tag-green-fg": {
+        "role": "tertiary",
+        "displayName": "Verde: texto de etiqueta",
+        "canonical": "#1c3829",
+        "dark": "#dcf0e2",
+        "tonalRamp": [
+          "oklch(15% 0.044 159.0)",
+          "oklch(26% 0.044 159.0)",
+          "oklch(37% 0.044 159.0)",
+          "oklch(48% 0.044 159.0)",
+          "oklch(59% 0.044 159.0)",
+          "oklch(70% 0.044 159.0)",
+          "oklch(82% 0.044 159.0)",
+          "oklch(95% 0.018 159.0)"
+        ]
+      },
+      "tag-green-strong": {
+        "role": "tertiary",
+        "displayName": "Verde: tinta fuerte",
+        "canonical": "#448361",
+        "dark": "#529e72",
+        "tonalRamp": [
+          "oklch(15% 0.085 158.4)",
+          "oklch(26% 0.085 158.4)",
+          "oklch(37% 0.085 158.4)",
+          "oklch(48% 0.085 158.4)",
+          "oklch(59% 0.085 158.4)",
+          "oklch(70% 0.085 158.4)",
+          "oklch(82% 0.085 158.4)",
+          "oklch(95% 0.034 158.4)"
+        ]
+      },
+      "tag-blue-bg": {
+        "role": "tertiary",
+        "displayName": "Azul: fondo de etiqueta",
+        "canonical": "#d3e5ef",
+        "dark": "#28456c",
+        "tonalRamp": [
+          "oklch(15% 0.024 231.9)",
+          "oklch(26% 0.024 231.9)",
+          "oklch(37% 0.024 231.9)",
+          "oklch(48% 0.024 231.9)",
+          "oklch(59% 0.024 231.9)",
+          "oklch(70% 0.024 231.9)",
+          "oklch(82% 0.024 231.9)",
+          "oklch(95% 0.009 231.9)"
+        ]
+      },
+      "tag-blue-fg": {
+        "role": "tertiary",
+        "displayName": "Azul: texto de etiqueta",
+        "canonical": "#183347",
+        "dark": "#dbe8f7",
+        "tonalRamp": [
+          "oklch(15% 0.049 242.6)",
+          "oklch(26% 0.049 242.6)",
+          "oklch(37% 0.049 242.6)",
+          "oklch(48% 0.049 242.6)",
+          "oklch(59% 0.049 242.6)",
+          "oklch(70% 0.049 242.6)",
+          "oklch(82% 0.049 242.6)",
+          "oklch(95% 0.020 242.6)"
+        ]
+      },
+      "tag-blue-strong": {
+        "role": "tertiary",
+        "displayName": "Azul: tinta fuerte",
+        "canonical": "#337ea9",
+        "dark": "#5e87c9",
+        "tonalRamp": [
+          "oklch(15% 0.099 237.4)",
+          "oklch(26% 0.099 237.4)",
+          "oklch(37% 0.099 237.4)",
+          "oklch(48% 0.099 237.4)",
+          "oklch(59% 0.099 237.4)",
+          "oklch(70% 0.099 237.4)",
+          "oklch(82% 0.099 237.4)",
+          "oklch(95% 0.040 237.4)"
+        ]
+      },
+      "tag-purple-bg": {
+        "role": "tertiary",
+        "displayName": "Morado: fondo de etiqueta",
+        "canonical": "#e8deee",
+        "dark": "#492f64",
+        "tonalRamp": [
+          "oklch(15% 0.024 313.1)",
+          "oklch(26% 0.024 313.1)",
+          "oklch(37% 0.024 313.1)",
+          "oklch(48% 0.024 313.1)",
+          "oklch(59% 0.024 313.1)",
+          "oklch(70% 0.024 313.1)",
+          "oklch(82% 0.024 313.1)",
+          "oklch(95% 0.010 313.1)"
+        ]
+      },
+      "tag-purple-fg": {
+        "role": "tertiary",
+        "displayName": "Morado: texto de etiqueta",
+        "canonical": "#412454",
+        "dark": "#ebdff7",
+        "tonalRamp": [
+          "oklch(15% 0.088 310.3)",
+          "oklch(26% 0.088 310.3)",
+          "oklch(37% 0.088 310.3)",
+          "oklch(48% 0.088 310.3)",
+          "oklch(59% 0.088 310.3)",
+          "oklch(70% 0.088 310.3)",
+          "oklch(82% 0.088 310.3)",
+          "oklch(95% 0.035 310.3)"
+        ]
+      },
+      "tag-purple-strong": {
+        "role": "tertiary",
+        "displayName": "Morado: tinta fuerte",
+        "canonical": "#9065b0",
+        "dark": "#9d68d3",
+        "tonalRamp": [
+          "oklch(15% 0.120 309.5)",
+          "oklch(26% 0.120 309.5)",
+          "oklch(37% 0.120 309.5)",
+          "oklch(48% 0.120 309.5)",
+          "oklch(59% 0.120 309.5)",
+          "oklch(70% 0.120 309.5)",
+          "oklch(82% 0.120 309.5)",
+          "oklch(95% 0.048 309.5)"
+        ]
+      },
+      "tag-pink-bg": {
+        "role": "tertiary",
+        "displayName": "Rosa: fondo de etiqueta",
+        "canonical": "#f5e0e9",
+        "dark": "#69314c",
+        "tonalRamp": [
+          "oklch(15% 0.026 349.8)",
+          "oklch(26% 0.026 349.8)",
+          "oklch(37% 0.026 349.8)",
+          "oklch(48% 0.026 349.8)",
+          "oklch(59% 0.026 349.8)",
+          "oklch(70% 0.026 349.8)",
+          "oklch(82% 0.026 349.8)",
+          "oklch(95% 0.010 349.8)"
+        ]
+      },
+      "tag-pink-fg": {
+        "role": "tertiary",
+        "displayName": "Rosa: texto de etiqueta",
+        "canonical": "#4c2337",
+        "dark": "#f7dfea",
+        "tonalRamp": [
+          "oklch(15% 0.068 351.0)",
+          "oklch(26% 0.068 351.0)",
+          "oklch(37% 0.068 351.0)",
+          "oklch(48% 0.068 351.0)",
+          "oklch(59% 0.068 351.0)",
+          "oklch(70% 0.068 351.0)",
+          "oklch(82% 0.068 351.0)",
+          "oklch(95% 0.027 351.0)"
+        ]
+      },
+      "tag-pink-strong": {
+        "role": "tertiary",
+        "displayName": "Rosa: tinta fuerte",
+        "canonical": "#c14c8a",
+        "dark": "#d15796",
+        "tonalRamp": [
+          "oklch(15% 0.164 350.4)",
+          "oklch(26% 0.164 350.4)",
+          "oklch(37% 0.164 350.4)",
+          "oklch(48% 0.164 350.4)",
+          "oklch(59% 0.164 350.4)",
+          "oklch(70% 0.164 350.4)",
+          "oklch(82% 0.164 350.4)",
+          "oklch(95% 0.065 350.4)"
+        ]
+      },
+      "tag-red-bg": {
+        "role": "tertiary",
+        "displayName": "Rojo: fondo de etiqueta",
+        "canonical": "#ffe2dd",
+        "dark": "#6e3630",
+        "tonalRamp": [
+          "oklch(15% 0.033 29.4)",
+          "oklch(26% 0.033 29.4)",
+          "oklch(37% 0.033 29.4)",
+          "oklch(48% 0.033 29.4)",
+          "oklch(59% 0.033 29.4)",
+          "oklch(70% 0.033 29.4)",
+          "oklch(82% 0.033 29.4)",
+          "oklch(95% 0.013 29.4)"
+        ]
+      },
+      "tag-red-fg": {
+        "role": "tertiary",
+        "displayName": "Rojo: texto de etiqueta",
+        "canonical": "#5d1715",
+        "dark": "#fbe1dd",
+        "tonalRamp": [
+          "oklch(15% 0.102 26.3)",
+          "oklch(26% 0.102 26.3)",
+          "oklch(37% 0.102 26.3)",
+          "oklch(48% 0.102 26.3)",
+          "oklch(59% 0.102 26.3)",
+          "oklch(70% 0.102 26.3)",
+          "oklch(82% 0.102 26.3)",
+          "oklch(95% 0.041 26.3)"
+        ]
+      },
+      "tag-red-strong": {
+        "role": "tertiary",
+        "displayName": "Rojo: tinta fuerte",
+        "canonical": "#d44c47",
+        "dark": "#df5452",
+        "tonalRamp": [
+          "oklch(15% 0.172 25.8)",
+          "oklch(26% 0.172 25.8)",
+          "oklch(37% 0.172 25.8)",
+          "oklch(48% 0.172 25.8)",
+          "oklch(59% 0.172 25.8)",
+          "oklch(70% 0.172 25.8)",
+          "oklch(82% 0.172 25.8)",
+          "oklch(95% 0.069 25.8)"
+        ]
+      }
+    },
+    "colorDerivations": [
+      {
+        "name": "column-tint",
+        "value": "color-mix(in srgb, var(--tag-bg) 30%, var(--bg))",
+        "purpose": "Fondo de columna."
+      },
+      {
+        "name": "column-ink",
+        "value": "color-mix(in srgb, var(--tag-strong) 50%, var(--tag-fg))",
+        "purpose": "Contador, iconos de cabecera y \"Nueva tarjeta\" de la columna."
+      },
+      {
+        "name": "add-card-hover",
+        "value": "color-mix(in srgb, var(--tag-bg) 55%, transparent)",
+        "purpose": "Hover de \"Nueva tarjeta\"."
+      },
+      {
+        "name": "board-background",
+        "value": "color-mix(in srgb, var(--tag-bg) 32%, var(--bg))",
+        "purpose": "Fondo del tablero (.board-view.has-bg)."
+      },
+      {
+        "name": "soft-tint",
+        "value": "color-mix(in srgb, var(--tag-bg) 30%, var(--bg|--card))",
+        "purpose": "Aviso de choque y tarjetas de calendario vencidas o próximas (45% en hover)."
+      }
+    ],
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Título de página de documentación e Inicio."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Título de tablero y bienvenida; título de página bajo 760px."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Título de tarjeta en la vista lateral; h1 de markdown."
+      },
+      "body-doc": {
+        "displayName": "Cuerpo de documento",
+        "purpose": "Markdown de las páginas, columna de 900px."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Toda la interfaz; 500 para lo interactivo o elegido."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Conteos, ubicación, metadatos de listas, títulos de sección."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Etiquetas, metadatos de tarjeta, rótulo de sección de la barra lateral. Minúscula de frase."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Editor markdown y código."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 0 0 1px rgba(15,15,15,.07), 0 2px 4px rgba(15,15,15,.05)",
+        "dark": "0 0 0 1px rgba(255,255,255,.07), 0 2px 4px rgba(0,0,0,.25)",
+        "purpose": "Tarjetas y compositor en reposo."
+      },
+      {
+        "name": "card-hover",
+        "value": "0 0 0 1px rgba(15,15,15,.09), 0 4px 10px rgba(15,15,15,.08)",
+        "dark": "0 0 0 1px rgba(255,255,255,.1), 0 4px 12px rgba(0,0,0,.35)",
+        "purpose": "Tarjeta bajo el ratón."
+      },
+      {
+        "name": "pop",
+        "value": "0 0 0 1px rgba(15,15,15,.05), 0 3px 6px rgba(15,15,15,.1), 0 9px 24px rgba(15,15,15,.2)",
+        "dark": "0 0 0 1px rgba(255,255,255,.09), 0 3px 6px rgba(0,0,0,.3), 0 9px 24px rgba(0,0,0,.45)",
+        "purpose": "Popovers, buscador, aviso."
+      },
+      {
+        "name": "peek",
+        "value": "-1px 0 0 rgba(15,15,15,.06), -12px 0 32px rgba(15,15,15,.1)",
+        "dark": "-1px 0 0 rgba(255,255,255,.08), -12px 0 32px rgba(0,0,0,.4)",
+        "purpose": "Vista lateral de tarjeta."
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 2px rgba(35,131,226,.14)",
+        "purpose": "Campos en edición en línea (compositor, renombrar columna)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Salida suave para paneles, flechas del árbol, progreso y popovers."
+      },
+      {
+        "name": "state",
+        "value": "120ms",
+        "purpose": "Cambios de fondo en hover."
+      },
+      {
+        "name": "card",
+        "value": "150ms",
+        "purpose": "Sombra de tarjeta, giro de flecha, aparición de acciones."
+      },
+      {
+        "name": "panel",
+        "value": "220ms",
+        "purpose": "Entrada de la vista lateral (32px desde la derecha + fundido)."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition: none",
+        "purpose": "prefers-reduced-motion anula todas las transiciones."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "760px"
+      },
+      {
+        "name": "window-min",
+        "value": "720px"
+      }
+    ],
+    "window": {
+      "frame": "Electron sin marco, titleBarOverlay de 44px",
+      "overlay": {
+        "light": {
+          "color": "#ffffff",
+          "symbolColor": "#37352f"
+        },
+        "dark": {
+          "color": "#191919",
+          "symbolColor": "#d4d4d4"
+        }
+      }
+    },
+    "brand": {
+      "name": "Taskvia",
+      "logo": {
+        "large": "public/icon.svg",
+        "small": "public/icon-small.svg",
+        "ground": "#1f1e1c",
+        "columns": [
+          "#5b8def",
+          "#f4f1ea",
+          "#5fb072"
+        ],
+        "sidebarSize": "22px",
+        "note": "Colores sólo del logo; no son tokens de interfaz.",
+        "letter": "#f4f1ea",
+        "description": "Una T cuyo palo es la columna central de un tablero, entre una columna azul y otra verde; mismo dibujo grande y pequeño."
+      }
+    },
+    "iconography": {
+      "library": "lucide-static, sprite /icons.svg",
+      "ui": {
+        "helper": "icon(name, cls)",
+        "size": "16px (.i.sm 14px)",
+        "stroke": 1.75
+      },
+      "user": {
+        "storage": "lucide:<nombre>:<color>",
+        "helper": "glyph(v, cls)",
+        "color": "var(--tag-strong) de .c-<color>",
+        "sizes": {
+          "sidebar": "15px",
+          "list": "17px",
+          "menu": "18px",
+          "page": "64px",
+          "boardAndPeek": "48px"
+        },
+        "bigStroke": 1.4
+      },
+      "emoji": "ninguno"
+    }
+  },
+  "components": [
+    {
+      "name": "Botón primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal de la vista (\"Nueva\").",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\"><path d=\"M5 12h14M12 5v14\"/></svg>Nueva</button>",
+      "css": ".ds-btn { height: 28px; padding: 0 10px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 6px; font: 500 14px/1.5 var(--font, \"Segoe UI\", sans-serif); cursor: pointer; transition: background .12s; } .ds-btn-primary { background: var(--accent, #2383e2); color: var(--on-accent, #fff); } .ds-btn-primary:hover { background: var(--accent-hover, #0077d4); } .ds-btn:focus-visible { outline: 2px solid rgba(35,131,226,.6); outline-offset: 1px; }"
+    },
+    {
+      "name": "Botón fantasma",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Acciones secundarias (\"Etiquetas\", \"Añadir portada\").",
+      "html": "<button class=\"ds-btn-ghost\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\"/></svg>Etiquetas</button>",
+      "css": ".ds-btn-ghost { height: 28px; padding: 0 10px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 6px; background: none; color: var(--text-2, #73726e); font: 500 14px/1.5 var(--font, \"Segoe UI\", sans-serif); cursor: pointer; transition: background .12s; } .ds-btn-ghost:hover { background: var(--hover, rgba(55,53,47,.06)); color: var(--text, #37352f); } .ds-btn-ghost:focus-visible { outline: 2px solid rgba(35,131,226,.6); outline-offset: 1px; }"
+    },
+    {
+      "name": "Botón de icono",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Controles de 24px de la barra superior, filas y columnas.",
+      "html": "<button class=\"ds-ib\" aria-label=\"Atrás\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m12 19-7-7 7-7M19 12H5\"/></svg></button>",
+      "css": ".ds-ib { width: 24px; height: 24px; display: inline-grid; place-items: center; border: 0; border-radius: 4px; background: none; color: var(--text-2, #73726e); cursor: pointer; transition: background .12s; } .ds-ib:hover { background: var(--hover, rgba(55,53,47,.06)); color: var(--text, #37352f); } .ds-ib:active { background: var(--active, rgba(55,53,47,.1)); } .ds-ib:focus-visible { outline: 2px solid rgba(35,131,226,.6); outline-offset: 1px; }"
+    },
+    {
+      "name": "Etiqueta",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Propiedad de selección en uno de los nueve colores.",
+      "html": "<span class=\"ds-tag ds-c-blue\">web</span> <span class=\"ds-tag ds-c-orange\">móvil</span> <span class=\"ds-tag ds-c-green\"><span class=\"ds-dot\"></span>Hecho</span>",
+      "css": ".ds-c-blue { --tag-bg:#d3e5ef; --tag-fg:#183347; --tag-strong:#337ea9; } .ds-c-orange { --tag-bg:#fadec9; --tag-fg:#49290e; --tag-strong:#d9730d; } .ds-c-green { --tag-bg:#dbeddb; --tag-fg:#1c3829; --tag-strong:#448361; } .ds-tag { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 6px; border-radius: 3px; font: 12px/20px var(--font, \"Segoe UI\", sans-serif); background: var(--tag-bg); color: var(--tag-fg); white-space: nowrap; } .ds-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--tag-strong); }"
+    },
+    {
+      "name": "Tarjeta",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Tarjeta de tablero con portada, etiquetas, título y metadatos.",
+      "html": "<div class=\"ds-card\" tabindex=\"0\"><div class=\"ds-cover\"></div><div class=\"ds-card-body\"><div><span class=\"ds-card-tag\">backend</span></div><div class=\"ds-card-title\">Login con Google en la app móvil</div><div class=\"ds-card-meta\">0/4</div></div></div>",
+      "css": ".ds-card { width: 260px; background: var(--card, #fff); border-radius: 8px; box-shadow: var(--card-shadow, 0 0 0 1px rgba(15,15,15,.07), 0 2px 4px rgba(15,15,15,.05)); overflow: hidden; cursor: pointer; font: 14px/1.5 var(--font, \"Segoe UI\", sans-serif); color: var(--text, #37352f); transition: box-shadow .15s, background .12s; } .ds-card:hover { background: var(--card-hover, #fafaf9); box-shadow: var(--card-shadow-hover, 0 0 0 1px rgba(15,15,15,.09), 0 4px 10px rgba(15,15,15,.08)); } .ds-card:focus-visible { outline: 2px solid rgba(35,131,226,.6); outline-offset: 1px; } .ds-cover { height: 32px; background: #337ea9; } .ds-card-body { padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; } .ds-card-tag { display: inline-flex; height: 20px; padding: 0 6px; border-radius: 3px; font-size: 12px; line-height: 20px; background: #dbeddb; color: #1c3829; } .ds-card-title { font-weight: 500; line-height: 1.4; } .ds-card-meta { font-size: 12px; color: var(--text-2, #73726e); }"
+    },
+    {
+      "name": "Columna",
+      "kind": "custom",
+      "refersTo": "column",
+      "description": "Columna de tablero teñida con su color de etiqueta.",
+      "html": "<section class=\"ds-col ds-c-blue\"><div class=\"ds-col-head\"><span class=\"ds-col-name\">En curso</span><span class=\"ds-col-ct\">1</span></div><div class=\"ds-col-card\">Revisar PR de facturación</div><button class=\"ds-add-card\">+ Nueva tarjeta</button></section>",
+      "css": ".ds-c-blue { --tag-bg:#d3e5ef; --tag-fg:#183347; --tag-strong:#337ea9; } .ds-col { --col-ink: color-mix(in srgb, var(--tag-strong) 50%, var(--tag-fg)); width: 272px; border-radius: 10px; padding: 6px; background: color-mix(in srgb, var(--tag-bg) 30%, var(--bg, #fff)); display: flex; flex-direction: column; gap: 6px; font: 14px/1.5 var(--font, \"Segoe UI\", sans-serif); } .ds-col-head { display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 4px; } .ds-col-name { height: 22px; line-height: 22px; padding: 0 8px; border-radius: 3px; font-weight: 500; background: var(--tag-bg); color: var(--tag-fg); } .ds-col-ct { color: var(--col-ink); font-size: 13px; font-weight: 500; } .ds-col-card { background: var(--card, #fff); border-radius: 8px; padding: 8px 10px; font-weight: 500; box-shadow: 0 0 0 1px rgba(15,15,15,.07), 0 2px 4px rgba(15,15,15,.05); } .ds-add-card { height: 30px; padding: 0 6px; border: 0; border-radius: 6px; background: none; text-align: left; color: var(--col-ink); font: inherit; font-weight: 500; cursor: pointer; } .ds-add-card:hover { background: color-mix(in srgb, var(--tag-bg) 55%, transparent); } .ds-add-card:focus-visible { outline: 2px solid rgba(35,131,226,.6); outline-offset: 1px; }"
+    },
+    {
+      "name": "Fila de barra lateral",
+      "kind": "nav",
+      "refersTo": "sidebar-row",
+      "description": "Árbol de proyectos, tableros y páginas.",
+      "html": "<nav class=\"ds-sb\"><div class=\"ds-row ds-proj\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#d9730d\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px\"><path d=\"M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z\"/></svg> Acme</div><div class=\"ds-row ds-sel\" style=\"padding-left:18px\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#337ea9\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px\"><rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M8 7v7\"/><path d=\"M12 7v4\"/><path d=\"M16 7v9\"/></svg> Sprint <span class=\"ds-ct\">4</span></div><div class=\"ds-row\" style=\"padding-left:18px\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#448361\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px\"><path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/></svg> Ideas</div></nav>",
+      "css": ".ds-sb { width: 236px; padding: 6px; background: var(--sidebar, #f8f8f7); font: 14px/1.5 var(--font, \"Segoe UI\", sans-serif); } .ds-row { display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border-radius: 6px; color: var(--text-2, #73726e); cursor: pointer; } .ds-row:hover { background: var(--hover, rgba(55,53,47,.06)); } .ds-row.ds-sel { background: var(--active, rgba(55,53,47,.1)); color: var(--text, #37352f); font-weight: 500; } .ds-row.ds-proj { color: var(--text, #37352f); font-weight: 500; } .ds-ct { margin-left: auto; font-size: 12px; color: var(--text-3, #6f6e69); }"
+    },
+    {
+      "name": "Buscador de popover",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Campo de filtro dentro de menús.",
+      "html": "<input class=\"ds-pop-search\" placeholder=\"Busca una etiqueta…\">",
+      "css": ".ds-pop-search { width: 240px; height: 30px; padding: 0 8px; border: 0; outline: 0; border-radius: 6px; background: var(--hover, rgba(55,53,47,.06)); box-shadow: inset 0 0 0 1px var(--line, rgba(55,53,47,.09)); font: 14px var(--font, \"Segoe UI\", sans-serif); color: var(--text, #37352f); } .ds-pop-search::placeholder { color: var(--text-2, #73726e); } .ds-pop-search:focus { box-shadow: inset 0 0 0 1px var(--accent, #2383e2), 0 0 0 3px var(--accent-soft, rgba(35,131,226,.14)); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El cuaderno con columnas de color",
+    "overview": "Taskvia es una herramienta de escritorio local que se viste de cuaderno y trabaja como un tablero kanban. El cuaderno manda en todo lo que rodea al trabajo: lienzo blanco (o #191919 en oscuro), tinta cálida casi negra, barra lateral de papel gris, filas de 28px, títulos grandes en negrita con un icono Lucide grande encima y propiedades en tabla de dos columnas. El kanban entra sólo dentro del tablero: columnas teñidas con su color, tarjetas blancas con portada (de color o de imagen), etiquetas, fechas y adjuntos, y las vistas Lista y Calendario.\n\nLa densidad es la de una app de escritorio, no la de una web: texto base de 14px, controles de 24 a 30px, acciones que aparecen al pasar el ratón y atajos de teclado visibles (Ctrl K; `?` abre la ayuda de atajos). El color vive casi entero en los nueve colores de etiqueta; la interfaz en sí es neutra y el acento (azul por defecto) se reserva para la acción principal, el foco y la selección. Es una ventana Electron sin marco: la barra superior de 44px es la barra de título, arrastrable, con los botones nativos de Windows superpuestos sobre el mismo color que el lienzo.\n\nNo hay emojis en ningún sitio. Todo icono, de la interfaz o elegido por el usuario, es Lucide, servido como sprite local en `/icons.svg` (de `lucide-static`).\n\nSigue el tema de Ajustes (Sistema, Claro u Oscuro), que en Electron cambia el tema nativo y con él `prefers-color-scheme`: cada token tiene su valor oscuro (ver `.impeccable/design.json`, campo `dark`), y la barra nativa de la ventana cambia con él (#ffffff / #191919).",
+    "keyCharacteristics": [
+      "Neutros cálidos; el color lo ponen las etiquetas, las columnas, las portadas, el fondo del tablero y los iconos del usuario.",
+      "Nueve familias de color de etiqueta (`.c-<color>`), cada una con tres tintas (fondo, texto, fuerte).",
+      "Filas de 28px, texto de 14px, radios pequeños (3 a 12px).",
+      "Profundidad casi nula: lavados de hover y sombras de contorno de 1px.",
+      "Iconos Lucide en todo: trazo 1.75px a 16px en la interfaz; iconos de usuario guardados como `lucide:<nombre>:<color>`."
+    ],
+    "rules": [
+      {
+        "name": "La Regla de la Interfaz Neutra",
+        "body": "El cromo de la app (barra lateral, barra superior, botones, filas) es siempre neutro. El color sólo entra por los datos del usuario: etiquetas, columnas, portadas, fondo del tablero, iconos y el estado de las fechas. El acento es la única excepción y se limita a la acción principal, el foco, la selección y la marca de elegido."
+      },
+      {
+        "name": "La Regla de las Tres Tintas",
+        "body": "Todo color de etiqueta se usa como familia completa a través de `.c-<color>`; nunca un hex suelto. Un nuevo elemento teñido hereda las tres variables y se pinta con ellas o con una mezcla de ellas. Los estados de fecha también: vencida es `c-red`, vence en menos de 24 h `c-yellow`, completada `c-green` y el resto `c-gray`."
+      },
+      {
+        "name": "La Regla del Tinte Suave",
+        "body": "Las superficies grandes teñidas (columnas, fondo de tablero, avisos, tarjetas de calendario) nunca usan el fondo de etiqueta puro: se mezclan con el lienzo (30 a 32%). El color puro se reserva para piezas pequeñas (etiqueta, punto, portada, icono)."
+      },
+      {
+        "name": "La Regla del Peso, no de la Mayúscula",
+        "body": "Las etiquetas de sección (\"Proyectos\", \"Favoritos\", \"Subpáginas\", las de Ajustes y Atajos) son texto de 12 a 13px en peso 500 y tinta secundaria, en minúscula de frase. Nada de versalitas, mayúsculas espaciadas ni colores de acento en rótulos."
+      },
+      {
+        "name": "La Regla del Icono Teñido",
+        "body": "Un icono de usuario es siempre un Lucide con una de las nueve tintas fuertes; nunca un emoji, nunca un hex suelto, nunca el acento."
+      },
+      {
+        "name": "La Regla del Lavado",
+        "body": "Filas, botones, iconos y opciones no se elevan nunca: su hover es el lavado de hover y su estado pulsado o elegido, el lavado activo. Sólo las tarjetas ganan sombra al pasar el ratón."
+      },
+      {
+        "name": "La Regla de la Columna Plana",
+        "body": "Las columnas no tienen ni borde ni sombra; las separa su tinte. Las tarjetas dentro de ellas son lo único que tiene contorno."
+      }
+    ],
+    "dos": [
+      "**Do** pinta todo elemento teñido con las tres variables de su familia (`.c-<color>`) o con una mezcla `color-mix(in srgb, …)` de ellas.",
+      "**Do** tiñe las superficies grandes mezclando el fondo de etiqueta con el lienzo (30 a 32%) y deja el color puro para etiquetas, puntos, portadas e iconos.",
+      "**Do** usa `icon()` para iconos de interfaz y `glyph()` para iconos de usuario (`lucide:<nombre>:<color>`); ambos salen del sprite local `/icons.svg`.",
+      "**Do** usa el lavado de hover y el lavado activo como único estado de filas, botones e iconos.",
+      "**Do** mantén la densidad de escritorio: texto de 14px, filas de 28px, botones de icono de 24px, iconos de 16px con trazo 1.75.",
+      "**Do** esconde las acciones secundarias hasta el hover o el foco de su contenedor, y deja siempre un camino por teclado (`:focus-within`, atajos listados en `#keys`).",
+      "**Do** coloca todo lo flotante por debajo de `--top` y a 8px de los bordes de la ventana.",
+      "**Do** define cada color nuevo para claro y oscuro a la vez, y mantén la barra nativa de la ventana con el mismo color que el lienzo."
+    ],
+    "donts": [
+      "**Don't** uses emojis: ni en la interfaz, ni como icono de usuario, ni en los textos de la app.",
+      "**Don't** uses el acento como color de marca o decoración (ni para distinguir autores, ni en asas o separadores), ni los colores del logo fuera del logo.",
+      "**Don't** inventes colores de etiqueta fuera de los nueve de la paleta, ni uses un hex de etiqueta suelto sin su familia.",
+      "**Don't** pongas bordes ni sombras en las columnas, ni sombras de elevación en filas, botones u opciones.",
+      "**Don't** pongas rótulos en mayúsculas, versalitas o espaciados.",
+      "**Don't** introduzcas una segunda familia tipográfica para títulos de la interfaz; la jerarquía es tamaño y peso sobre la fuente del sistema.",
+      "**Don't** uses radios por encima de 12px ni sombras duras desplazadas."
+    ]
+  }
+}
