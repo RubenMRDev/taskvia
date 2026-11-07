@@ -37,16 +37,31 @@ ipcMain.handle('mcp-config', () => {
   return JSON.stringify({ mcpServers: { taskvia: server } }, null, 2);
 });
 
+// Actualizaciones (solo con la app instalada): busca al abrir y con el botón de Ajustes, descarga sola
+// y se instala al cerrar o al pulsar «Reiniciar». La UI recibe cada cambio de estado.
+const { autoUpdater } = updater;
+let win, update = { state: app.isPackaged ? 'idle' : 'dev' };
+const setUpdate = u => { update = u; win?.webContents.send('update', u); };
+autoUpdater.on('checking-for-update', () => setUpdate({ state: 'checking' }));
+autoUpdater.on('update-not-available', () => setUpdate({ state: 'none' }));
+autoUpdater.on('update-available', i => setUpdate({ state: 'downloading', version: i.version, percent: 0 }));
+autoUpdater.on('download-progress', p => setUpdate({ ...update, state: 'downloading', percent: Math.round(p.percent) }));
+autoUpdater.on('update-downloaded', i => setUpdate({ state: 'ready', version: i.version }));
+autoUpdater.on('error', e => setUpdate({ state: 'error', message: String(e.message || e).split('\n')[0].slice(0, 140) }));
+const checkUpdate = () => { if (app.isPackaged && !['checking', 'downloading', 'ready'].includes(update.state)) autoUpdater.checkForUpdates().catch(() => {}); };
+ipcMain.handle('update-status', () => ({ ...update, current: app.getVersion() }));
+ipcMain.handle('update-check', checkUpdate);
+ipcMain.on('update-install', () => { if (update.state === 'ready') autoUpdater.quitAndInstall(); });
+
 // Copia de seguridad diaria de data/ (al abrir y comprobando cada hora; se guardan 14 días).
 const backup = () => { try { backupIfDue(); } catch (e) { console.error('Copia de seguridad fallida:', e.message); } };
 
 app.whenReady().then(async () => {
   await ready;
-  if (app.isPackaged) updater.autoUpdater.checkForUpdatesAndNotify().catch(() => {}); // sin conexión, ya avisará otro día
   if (firstRun) try { seedExample(); } catch (e) { console.error('Proyecto de ejemplo:', e.message); }
   backup();
   setInterval(backup, 60 * 60 * 1000);
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1360, height: 860, minWidth: 720, minHeight: 480, title: 'Taskvia', icon: ICON,
     backgroundColor: overlay().color, titleBarStyle: 'hidden', titleBarOverlay: overlay(),
     webPreferences: { preload: path.join(import.meta.dirname, 'preload.cjs') },
@@ -65,6 +80,7 @@ app.whenReady().then(async () => {
       { type: 'separator' }, { role: 'selectAll', label: 'Seleccionar todo' },
     ]).popup();
   });
+  win.webContents.once('did-finish-load', checkUpdate); // sin conexión no pasa nada: queda en «error» y se reintenta otro día
   win.loadURL(URL);
 });
 app.on('window-all-closed', () => app.quit());

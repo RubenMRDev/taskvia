@@ -166,7 +166,7 @@ await step('Imagen desde el menú «/»: se guarda en el proyecto y en el markdo
   fs.writeFileSync(png, Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64'));
   await win.keyboard.press('Enter');
   await win.keyboard.type('/imagen');
-  await win.locator('#pop.inline-menu .opt', { hasText: 'Imagen' }).waitFor();
+  await win.locator('#pop.inline-menu .opt.kb', { hasText: 'Imagen' }).waitFor(); // la elegida, no solo visible: si no, Enter puede pillar el filtro a medias
   const [chooser] = await Promise.all([win.waitForEvent('filechooser'), win.keyboard.press('Enter')]);
   await chooser.setFiles(png);
   await main.locator('.rte img').waitFor();

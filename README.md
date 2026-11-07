@@ -38,7 +38,7 @@ Taskvia pone en orden las tareas, la documentación y lo que la IA va haciendo e
 
 ## Instalar
 
-**Windows:** descarga `Taskvia-Setup-x.y.z.exe` de la [última versión](https://github.com/RubenMRDev/taskvia/releases/latest) y ábrelo. Se actualiza sola cuando sale una versión nueva. Al no estar firmado, Windows puede avisar la primera vez: «Más información» → «Ejecutar de todas formas».
+**Windows:** descarga `Taskvia-Setup-x.y.z.exe` de la [última versión](https://github.com/RubenMRDev/taskvia/releases/latest) y ábrelo. Se actualiza sola cuando sale una versión nueva (o al momento desde Ajustes → Actualizaciones → Buscar actualizaciones). Al no estar firmado, Windows puede avisar la primera vez: «Más información» → «Ejecutar de todas formas».
 
 La primera vez se abre con un proyecto de ejemplo, «Bienvenida», que enseña lo básico. Bórralo cuando quieras.
 

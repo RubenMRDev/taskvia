@@ -14,10 +14,10 @@ function applySettings(s) {
   document.body.classList.toggle('fixed-bar', s.formatBar === 'fixed');
   window.desktop?.setTheme(s.theme); // en Electron cambia el tema nativo y con él prefers-color-scheme
 }
+const row = (title, help, control) => `<div class="set-row"><div><b>${title}</b><span>${help}</span></div>${control}</div>`;
 function renderSettings() {
   const seg = (key, opts) => `<div class="seg" role="radiogroup">${opts.map(([v, label, ic]) =>
     `<button role="radio" aria-checked="${settings[key] === v}" class="${settings[key] === v ? 'on' : ''}" data-set="${key}" data-val="${v}">${ic || ''}${label}</button>`).join('')}</div>`;
-  const row = (title, help, control) => `<div class="set-row"><div><b>${title}</b><span>${help}</span></div>${control}</div>`;
   const font = f => `<span class="aa" style="font-family:${f}">Ag</span>`;
   $('#settings-body').innerHTML = `
     <section><h3>Apariencia</h3>
@@ -34,17 +34,43 @@ function renderSettings() {
       ${window.desktop ? row('Conectar con tu IA', 'Copia la configuración MCP y pégala en tu asistente de IA; después, reinícialo.', `<button class="btn ghost" data-mcp-config>${icon('plug', 'sm')}Copiar configuración</button>`) : ''}
       ${row('Consejos para la IA', 'Muestra en Inicio y en cada proyecto cómo pedirle tareas a tu asistente de IA.', `<button class="switch" role="switch" aria-checked="${settings.aiTips}" aria-label="Consejos para la IA" data-set="aiTips" data-val="${!settings.aiTips}"></button>`)}
     </section>
+    ${window.desktop ? `<section><h3>Actualizaciones</h3>${updateRow()}</section>` : ''}
     <section><h3>Datos</h3>
       ${row('Carpeta de datos', `<span class="path">${esc(settings.dataDir)}</span>`, window.desktop ? '<button class="btn ghost" data-open-data>' + icon('folder-open', 'sm') + 'Abrir carpeta</button>' : '')}
       ${row('Copias de seguridad', settings.lastBackup ? `Una al día, se guardan 14. La última: ${esc(settings.lastBackup)}.` : 'Una al día al abrir la app; se guardan 14.',
         `<div class="row-btns"><button class="btn ghost" data-backup-now>${icon('database-backup', 'sm')}Hacer copia ahora</button>${window.desktop ? `<button class="btn ghost" data-open-backups>${icon('folder-clock', 'sm')}Abrir copias</button>` : ''}</div>`)}
     </section>`;
 }
-async function openSettings() { settings.lastBackup = (await call('listBackups'))[0]; renderSettings(); $('#settings').showModal(); }
+// Estado de la actualización que manda Electron: idle, checking, none, downloading, ready, error (dev = desde el código)
+let update = { state: 'dev' };
+function updateRow() {
+  const u = update, busy = ['checking', 'downloading'].includes(u.state);
+  const help = {
+    dev: 'Desde el código: se actualiza con git pull.', idle: 'Busca versiones nuevas cada vez que abres la app.',
+    checking: 'Buscando…', none: 'Tienes la última versión.', downloading: `Descargando la ${esc(u.version)}… ${u.percent || 0}%`,
+    ready: `La ${esc(u.version)} está lista. Se instala al cerrar la app, o ahora si reinicias.`, error: `No se pudo comprobar: ${esc(u.message)}`,
+  }[u.state];
+  const btn = u.state === 'dev' ? '' : u.state === 'ready'
+    ? `<button class="btn primary" data-update-install>${icon('rotate-cw', 'sm')}Reiniciar y actualizar</button>`
+    : `<button class="btn ghost" data-update-check ${busy ? 'disabled' : ''}>${icon('refresh-cw', 'sm')}Buscar actualizaciones</button>`;
+  return row(`Versión ${esc(u.current || '')}`, help, btn);
+}
+window.desktop?.onUpdate(async u => {
+  update = { ...update, ...u };
+  if ($('#settings').open) renderSettings();
+  if (u.state === 'ready') toast(`La versión ${u.version} está lista`, false, { label: 'Reiniciar', run: () => window.desktop.installUpdate() });
+});
+async function openSettings() {
+  settings.lastBackup = (await call('listBackups'))[0];
+  if (window.desktop) update = await window.desktop.updateStatus();
+  renderSettings(); $('#settings').showModal();
+}
 $('#settings').addEventListener('click', async e => {
   if (e.target.id === 'settings' || e.target.closest('[data-close]')) return $('#settings').close();
   if (e.target.closest('[data-open-data]')) return window.desktop?.openDataDir();
   if (e.target.closest('[data-open-backups]')) return window.desktop?.openBackups();
+  if (e.target.closest('[data-update-check]')) return window.desktop.checkUpdate();
+  if (e.target.closest('[data-update-install]')) return window.desktop.installUpdate();
   if (e.target.closest('[data-mcp-config]')) return copyText(await window.desktop.mcpConfig(), 'Configuración copiada. Pégala en tu asistente de IA');
   if (e.target.closest('[data-backup-now]')) {
     settings.lastBackup = (await call('backupNow')).name;

@@ -7,4 +7,8 @@ contextBridge.exposeInMainWorld('desktop', {
   openBackups: () => ipcRenderer.send('open-backups'),
   openFile: (project, file, reveal = false) => ipcRenderer.send('open-file', project, file, reveal),
   mcpConfig: () => ipcRenderer.invoke('mcp-config'),
+  updateStatus: () => ipcRenderer.invoke('update-status'),
+  checkUpdate: () => ipcRenderer.invoke('update-check'),
+  installUpdate: () => ipcRenderer.send('update-install'),
+  onUpdate: cb => ipcRenderer.on('update', (_, u) => cb(u)),
 });
