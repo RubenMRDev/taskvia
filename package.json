@@ -69,7 +69,8 @@
       {
         "provider": "github",
         "owner": "RubenMRDev",
-        "repo": "taskvia"
+        "repo": "taskvia",
+        "releaseType": "release"
       }
     ]
   }
