@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 
 const appData = process.env.APPDATA || (process.platform === 'darwin' ? path.join(os.homedir(), 'Library', 'Application Support')
   : process.env.XDG_DATA_HOME || path.join(os.homedir(), '.local', 'share'));
@@ -692,25 +693,70 @@ const pageFiles = p => fs.readdirSync(p.docs, { recursive: true })
   .filter(f => f.endsWith('.md')).map(f => f.slice(0, -3).split(path.sep).join('/'));
 
 // Lista plana; incluye como "virtual" las carpetas intermedias que no tienen su propio .md.
+// ---------- «La IA está editando»: editing.json guarda hasta cuándo está bloqueada cada página ----------
+// Lo escribe el proceso del MCP y lo lee la app en cada sincronización. Caduca solo: 30 s después de la última
+// escritura de la IA, o 10 min si la IA avisó con doc_editing y no cerró. Mientras dura, desde la app no se edita.
+const EDITING = path.join(DATA_DIR, 'editing.json');
+const AI_WRITE_MS = 30e3, AI_SESSION_MS = 10 * 60e3;
+const readEditing = () => { try { return readJSON(EDITING); } catch { return {}; } };
+const editKey = (p, rel) => `${p.name}/${rel}`;
+export function isAiEditing(projRef, ref) {
+  const p = project(projRef);
+  return (readEditing()[editKey(p, pagePath(ref))] ?? 0) > Date.now();
+}
+// on: true marca (ms desde ahora, sin acortar una marca más larga), false la quita
+export function setAiEditing(projRef, ref, on, ms = AI_SESSION_MS) {
+  const p = project(projRef), key = editKey(p, pagePath(ref)), e = readEditing(), t = Date.now();
+  for (const k of Object.keys(e)) if (e[k] <= t) delete e[k];
+  if (on) e[key] = Math.max(e[key] ?? 0, t + ms); else delete e[key];
+  writeJSON(EDITING, e);
+}
+
 export function listPages(projRef) {
   const p = project(projRef), files = pageFiles(p), all = new Set(files);
+  const e = readEditing(), t = Date.now(), busy = rel => (e[editKey(p, rel)] ?? 0) > t;
   files.forEach(f => { const s = f.split('/'); for (let i = 1; i < s.length; i++) all.add(s.slice(0, i).join('/')); });
   return [...all].sort().map(rel => files.includes(rel)
-    ? { path: rel, icon: parsePage(fs.readFileSync(pageFile(p, rel), 'utf8')).icon }
+    ? { path: rel, icon: parsePage(fs.readFileSync(pageFile(p, rel), 'utf8')).icon, ...(busy(rel) ? { aiEditing: true } : {}) }
     : { path: rel, icon: '', virtual: true });
 }
 
 // hash: versión del fichero que se ha leído; al guardar con baseHash se detecta si otro (la IA) lo cambió entre medias.
 export function readPage(projRef, ref) {
   const p = project(projRef), rel = pagePath(ref), f = pageFile(p, rel);
-  if (fs.existsSync(f)) { const raw = fs.readFileSync(f, 'utf8'); return { path: rel, exists: true, hash: hash(raw), ...parsePage(raw) }; }
+  if (fs.existsSync(f)) { const raw = fs.readFileSync(f, 'utf8'); return { path: rel, exists: true, hash: hash(raw), aiEditing: isAiEditing(p.name, rel), ...parsePage(raw) }; }
   if (fs.existsSync(pageDir(p, rel))) return { path: rel, exists: false, hash: '', icon: '', content: '' };
   throw new Error(`No existe la página "${rel}" en "${p.name}"`);
 }
 
 // Crea o actualiza. `content` o `icon` sin pasar se conservan.
+// Imágenes del disco en el markdown (![texto](C:/ruta/foto.png) o file:///…): se copian a assets/ del proyecto y el
+// enlace pasa a apuntar ahí, para que la página se vea en la app y viaje con el proyecto. Lo usa sobre todo la IA por MCP.
+function importLocalImages(p, content) {
+  const done = new Map();
+  return String(content).replace(/!\[([^\]]*)\]\((<[^>]+>|[^)\s]+)(\s+"[^"]*")?\)/g, (m, alt, target, title = '') => {
+    const t = target.replace(/^<|>$/g, '');
+    let file = null;
+    try {
+      if (/^file:\/\//i.test(t)) file = fileURLToPath(t);
+      else if (/^[A-Za-z]:[\\/]/.test(t) || (t.startsWith('/') && !t.startsWith('/asset/'))) file = decodeURI(t);
+    } catch { return m; }
+    if (!file || !isImageFile(file)) return m;
+    if (!done.has(file)) {
+      let data;
+      try { data = fs.readFileSync(file); } catch { return m; } // no existe o no se puede leer: el enlace se queda como estaba
+      if (!data.length || data.length > MAX_ASSET) return m;
+      done.set(file, storeFile(p, path.basename(file), data));
+    }
+    return `![${alt}](assets/${done.get(file)}${title})`;
+  });
+}
+
 export function writePage(projRef, ref, { content, icon, baseHash }) {
   const p = project(projRef), rel = pagePath(ref), f = pageFile(p, rel);
+  if (actor === 'tú' && isAiEditing(p.name, rel)) throw new Error('La IA está editando esta página: espera a que termine');
+  if (actor !== 'tú') setAiEditing(p.name, rel, true, AI_WRITE_MS); // lo que escribe la IA se ve con el robot un rato
+  if (content !== undefined) content = importLocalImages(p, content);
   const raw = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '';
   if (baseHash !== undefined && baseHash !== (raw ? hash(raw) : ''))
     throw conflict('La página ha cambiado mientras la editabas', parsePage(raw).content);

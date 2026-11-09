@@ -671,3 +671,23 @@ body.resizing { cursor: col-resize; user-select: none; }
 .nb-prev i { flex: 1; max-width: 26px; border-radius: 3px; background: color-mix(in srgb, var(--tag-bg) 60%, #fff); }
 .nb-prev > .i { margin: auto; }
 .nb-body .confirm-actions { margin-top: 6px; }
+
+/* La IA está editando: robot junto a la página en la barra lateral y aviso arriba (la página queda solo de lectura) */
+.ai-busy { display: inline-flex; color: var(--accent); margin-left: 4px; animation: ai-pulse 1.6s ease-in-out infinite; }
+@keyframes ai-pulse { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .ai-busy { animation: none; } }
+.ai-banner { margin: 6px 0 14px; background: var(--accent-soft); color: var(--text); }
+.ai-banner .i { color: var(--accent); }
+.ai-locked .rte { cursor: default; }
+
+/* Exportar a PDF: solo la página, en claro, sin la app alrededor */
+@media print {
+  :root { color-scheme: light; --bg: #fff; --text: #1f1f1f; --text-2: #555; --line: #e5e5e5; --sidebar: #f6f6f5; }
+  html, body { background: #fff !important; color: #1f1f1f !important; height: auto !important; overflow: visible !important; display: block !important; }
+  #app, #main, .doc { width: auto !important; max-width: none !important; }
+  #sb, #top, #peek, #pop, #toast, .head-acts, .rte-bar, .conflict-slot, .ai-banner, #bubble, .sect { display: none !important; }
+  #app, #main { display: block !important; height: auto !important; overflow: visible !important; position: static !important; }
+  .doc.pad { padding: 0 !important; max-width: none !important; }
+  .doc img { max-width: 100% !important; break-inside: avoid; }
+  .doc h1, .doc h2, .doc h3 { break-after: avoid; }
+}

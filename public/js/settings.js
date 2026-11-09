@@ -31,7 +31,7 @@ function renderSettings() {
       ${row('Barra de formato', 'Flotante: aparece al seleccionar texto. Fija: siempre arriba, como en Word.', seg('formatBar', [['floating', 'Flotante'], ['fixed', 'Fija']]))}
     </section>
     <section><h3>IA</h3>
-      ${window.desktop ? row('Conectar con tu IA', 'Copia la configuración MCP y pégala en tu asistente de IA; después, reinícialo.', `<button class="btn ghost" data-mcp-config>${icon('plug', 'sm')}Copiar configuración</button>`) : ''}
+      ${window.desktop ? row('Conectar con tu IA', 'Añade Taskvia a tu asistente de IA y le deja la regla de documentar siempre aquí. Después, reinícialo. Si usas otro asistente, copia la configuración y pégala tú.', `<div class="row-btns"><button class="btn primary" data-mcp-connect>${icon('plug-zap', 'sm')}Conectar</button><button class="btn ghost" data-mcp-config>${icon('copy', 'sm')}Copiar configuración</button></div>`) : ''}
       ${row('Consejos para la IA', 'Muestra en Inicio y en cada proyecto cómo pedirle tareas a tu asistente de IA.', `<button class="switch" role="switch" aria-checked="${settings.aiTips}" aria-label="Consejos para la IA" data-set="aiTips" data-val="${!settings.aiTips}"></button>`)}
     </section>
     ${window.desktop ? `<section><h3>Actualizaciones</h3>${updateRow()}</section>` : ''}
@@ -67,6 +67,21 @@ window.desktop?.onUpdate(async u => {
     toast(`Taskvia ${u.version} disponible`, false, { label: 'Ver', run: openSettings });
   }
 });
+// Exportar la página abierta: el proceso principal pregunta dónde guardar (y, en PDF, imprime la vista de la página)
+async function exportPage(format) {
+  await flushRte();
+  document.body.classList.add('printing');
+  try {
+    const r = await window.desktop.exportPage(format, route.project, route.path);
+    if (r?.file) toast(`Exportada: ${r.file.split(/[\\/]/).pop()}`, false, { label: 'Abrir', run: () => window.desktop.openPath(r.file) });
+    else if (r?.error) toast(r.error, true);
+  } finally { document.body.classList.remove('printing'); }
+}
+async function connectAI() {
+  const r = await window.desktop.connectAI();
+  if (r.error) return toast(r.error, true);
+  toast(r.done.length ? `Conectado: ${r.done.join(', ')}. Reinicia tu IA para que lo coja.` : 'No he encontrado ninguna IA instalada: usa «Copiar configuración».', !r.done.length);
+}
 async function openSettings() {
   settings.lastBackup = (await call('listBackups'))[0];
   if (window.desktop) update = await window.desktop.updateStatus();
@@ -79,6 +94,7 @@ $('#settings').addEventListener('click', async e => {
   if (e.target.closest('[data-update-check]')) return window.desktop.checkUpdate();
   if (e.target.closest('[data-update-download]')) return window.desktop.downloadUpdate();
   if (e.target.closest('[data-update-install]')) return window.desktop.installUpdate();
+  if (e.target.closest('[data-mcp-connect]')) return connectAI();
   if (e.target.closest('[data-mcp-config]')) return copyText(await window.desktop.mcpConfig(), 'Configuración copiada. Pégala en tu asistente de IA');
   if (e.target.closest('[data-backup-now]')) {
     settings.lastBackup = (await call('backupNow')).name;

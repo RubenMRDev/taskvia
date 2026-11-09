@@ -207,6 +207,31 @@ assert.equal(s.getBoard('Acme', 'Tallas').cards[0].coverSize, undefined);
 s.addAttachment(fc.id, { name: 'foto.png', base64: Buffer.from('png').toString('base64'), cover: true });
 assert.match(s.getBoard('Acme', 'Tallas').cards[0].cover, /^img:/);
 
+// Imágenes del disco en una página (ruta o file:///): se copian a assets/ y el enlace apunta a la copia
+const shot = path.join(dir, 'captura de prueba.png');
+fs.writeFileSync(shot, Buffer.from('png'));
+const url = 'file:///' + shot.replace(/\\/g, '/').replace(/ /g, '%20');
+s.writePage('Acme', 'Guía con capturas', { content: `![uno](${url})\n\n![dos](<${shot}>)\n\n![falta](C:/no/existe.png)\n\n![web](https://x.test/a.png)` });
+const withImgs = s.readPage('Acme', 'Guía con capturas').content;
+const copies = [...withImgs.matchAll(/!\[(uno|dos)\]\(assets\/([0-9a-f]{8}\.png)\)/g)];
+assert.equal(copies.length, 2, withImgs);
+assert.equal(copies[0][2], copies[1][2], 'la misma imagen se copia una vez');
+assert.ok(fs.existsSync(s.assetPath('Acme', copies[0][2])));
+assert.match(withImgs, /!\[falta\]\(C:\/no\/existe\.png\)/);
+assert.match(withImgs, /!\[web\]\(https:\/\/x\.test\/a\.png\)/);
+
+// La IA está editando: lo que escribe por MCP bloquea la página un rato; doc_editing marca y libera
+await call('doc_write', { project: 'Acme', path: 'Bloqueo', content: 'de la IA' });
+assert.ok(s.readPage('Acme', 'Bloqueo').aiEditing);
+assert.ok(s.listPages('Acme').find(p => p.path === 'Bloqueo').aiEditing);
+assert.throws(() => s.asActor('tú', () => s.writePage('Acme', 'Bloqueo', { content: 'mío' })), /La IA está editando/);
+await call('doc_editing', { project: 'Acme', path: 'Bloqueo', editing: false });
+assert.ok(!s.readPage('Acme', 'Bloqueo').aiEditing);
+s.asActor('tú', () => s.writePage('Acme', 'Bloqueo', { content: 'mío' }));
+await call('doc_editing', { project: 'Acme', path: 'Bloqueo', editing: true });
+assert.ok(s.readPage('Acme', 'Bloqueo').aiEditing);
+s.setAiEditing('Acme', 'Bloqueo', false);
+
 // Proyecto de ejemplo del primer arranque: se crea entero y sus enlaces apuntan a páginas que existen
 (await import('./ejemplo.js')).seedExample();
 const demo = s.getBoard('Bienvenida', 'Primeros pasos');

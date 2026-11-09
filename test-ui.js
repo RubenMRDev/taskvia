@@ -18,6 +18,7 @@ s.createBoard('Demo', { name: 'Sprint' });
 s.createCard('Demo', 'Sprint', { title: 'Primera tarea', checklist: ['Paso 1', 'Paso 2'], labels: ['bug'] });
 s.createCard('Demo', 'Sprint', { title: 'Segunda', labels: ['web'] });
 s.writePage('Demo', 'Guía', { content: '# Guía\n\nTexto inicial.' });
+s.setAiEditing('Demo', 'Guía', false); // los datos de partida los escribe la prueba, no la IA
 s.createBoard('Otro', { name: 'Backlog' });
 const sprint = () => s.getBoard('Demo', 'Sprint');
 const card = title => sprint().cards.find(c => c.title === title);
@@ -188,6 +189,7 @@ await step('Si la IA cambia la página mientras escribes, avisa y no la pisa', a
   await win.keyboard.press('End');
   await win.keyboard.type(' (mía)');
   s.writePage('Demo', 'Guía', { content: 'Cambio de la IA' }); // escribe "otro" mientras tanto
+  s.setAiEditing('Demo', 'Guía', false); // aquí se prueba el aviso de choque, no el bloqueo
   await main.locator('.banner.warn').waitFor({ timeout: 8000 });
   assert.equal(s.readPage('Demo', 'Guía').content, 'Cambio de la IA', 'no se ha pisado');
   await main.locator('[data-conflict="mine"]').click();
@@ -350,6 +352,30 @@ await step('Portada desde el menú de la tarjeta: color y tamaño completo', asy
   const c = s.getBoard('Otro', 'Con tamaño').cards.find(x => x.id === id);
   assert.equal(c.cover, 'green'); assert.equal(c.coverSize, 'full');
   await win.keyboard.press('Escape');
+});
+
+await step('La IA está editando: robot en la barra lateral y página solo de lectura', async () => {
+  s.setAiEditing('Demo', 'Guía', true);
+  await win.locator('#tree [data-kind="page"][data-path="Guía"] .ai-busy').waitFor({ timeout: 8000 });
+  await win.locator('#tree [data-kind="page"][data-path="Guía"]').click();
+  await main.locator('.ai-banner').waitFor();
+  assert.equal(await main.locator('.rte').getAttribute('contenteditable'), 'false');
+  s.setAiEditing('Demo', 'Guía', false);
+  await until(async () => (await main.locator('.rte').getAttribute('contenteditable')) === 'true', 'se desbloquea al terminar', 8000);
+  assert.equal(await win.locator('#tree .ai-busy').count(), 0);
+});
+
+await step('Exportar la página a Markdown y a PDF desde el menú «…»', async () => {
+  const out = path.join(dir, 'export');
+  fs.mkdirSync(out);
+  for (const [fmt, file] of [['md', 'Guía.md'], ['pdf', 'Guía.pdf']]) {
+    await app.evaluate(({ dialog }, f) => { dialog.showSaveDialog = async () => ({ canceled: false, filePath: f }); }, path.join(out, file));
+    await win.locator('#view-menu').click();
+    await win.locator(`#pop [data-v="export-${fmt}"]`).click();
+    await until(() => fs.existsSync(path.join(out, file)) && fs.statSync(path.join(out, file)).size > 0, `se crea ${file}`, 15000);
+  }
+  assert.match(fs.readFileSync(path.join(out, 'Guía.md'), 'utf8'), /^# Guía/);
+  assert.equal(fs.readFileSync(path.join(out, 'Guía.pdf')).subarray(0, 4).toString(), '%PDF');
 });
 
 await app.close();

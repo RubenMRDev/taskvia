@@ -174,14 +174,15 @@ function listView(b, live, filtering) {
 function pageView() {
   const p = proj(route.project);
   const name = page.path.split('/').at(-1);
-  const fromCards = backrefs.filter(r => r.card), fromPages = backrefs.filter(r => r.page);
-  return `<div class="doc pad">
+  const fromCards = backrefs.filter(r => r.card), fromPages = backrefs.filter(r => r.page), busy = page.aiEditing;
+  return `<div class="doc pad ${busy ? 'ai-locked' : ''}">
     <div class="phead">
       <div class="head-acts">${page.icon ? '' : `<button class="btn ghost" data-act="emoji" data-target="page">${icon('face-slightly-smiling-plus', 'sm')}Añadir icono</button>`}</div>
       ${page.icon ? `<button class="big-emoji" data-act="emoji" data-target="page" title="Cambiar icono">${glyph(page.icon)}</button>` : ''}
-      <h1 class="title" contenteditable="plaintext-only" spellcheck="false" data-edit="page-title" data-project="${esc(route.project)}" data-id="${esc(page.path)}" data-orig="${esc(name)}" data-ph="Sin título">${esc(name)}</h1>
+      <h1 class="title" contenteditable="${busy ? 'false' : 'plaintext-only'}" spellcheck="false" data-edit="page-title" data-project="${esc(route.project)}" data-id="${esc(page.path)}" data-orig="${esc(name)}" data-ph="Sin título">${esc(name)}</h1>
     </div>
-    ${rteBar('page')}<div class="conflict-slot"></div><div class="md doc-body rte ${page.content.trim() ? '' : 'empty'}" contenteditable="true" spellcheck="true" data-rte="page" data-project="${esc(route.project)}" data-path="${esc(page.path)}" data-ph="Escribe aquí… pulsa / para insertar bloques y subpáginas, o [[ para enlazar otra página">${rteHTML(page.content, route.project)}</div>
+    ${busy ? `<div class="banner ai-banner">${icon('bot', 'sm')}<span><b>La IA está editando esta página.</b> Se desbloquea sola cuando termine; mientras, solo puedes leerla.</span></div>` : ''}
+    ${rteBar('page')}<div class="conflict-slot"></div><div class="md doc-body rte ${page.content.trim() ? '' : 'empty'}" contenteditable="${busy ? 'false' : 'true'}" spellcheck="true" data-rte="page" data-project="${esc(route.project)}" data-path="${esc(page.path)}" data-ph="Escribe aquí… pulsa / para insertar bloques y subpáginas, o [[ para enlazar otra página">${rteHTML(page.content, route.project)}</div>
     ${backrefs.length ? `<div class="sect"><h2>Enlazada desde</h2>
       ${fromCards.map(r => `<div class="lrow" data-act="open-card" data-board="${r.board.id}" data-card="${r.card.id}">
         <span class="em">${glyph(r.card.emoji || r.board.emoji || 'lucide:square-kanban:blue')}</span><span class="nm">${esc(r.card.title)}</span><span class="meta">Tarjeta · ${esc(r.board.name)}</span></div>`).join('')}

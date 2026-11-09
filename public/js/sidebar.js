@@ -43,7 +43,7 @@ function renderSidebar() {
     return `<div class="row ${isSel(r) ? 'sel' : ''} ${open ? 'open' : ''}" style="--lvl:${lvl}" data-href="${href(r)}" title="${esc(n.path)}" data-kind="page" data-project="${esc(p.name)}" data-path="${esc(n.path)}">
       <button class="tw ${n.children.length ? '' : 'leaf'}" data-act="toggle-page" data-key="${esc(key)}" aria-label="Desplegar">${icon('chevron-right', 'sm')}</button>
       <span class="em">${n.icon ? glyph(n.icon) : icon('file-text')}</span>
-      <span class="nm">${esc(n.name)}</span>
+      <span class="nm">${esc(n.name)}</span>${n.aiEditing ? `<span class="ai-busy" title="La IA está editando esta página">${icon('bot', 'sm')}</span>` : ''}
       <span class="acts">${MENU}<button class="ib" data-act="new-subpage" data-project="${esc(p.name)}" data-path="${esc(n.path)}" title="Añadir subpágina">${icon('plus', 'sm')}</button></span>
     </div>${open ? pageRows(p, n.children, lvl + 1) : ''}`;
   }).join('');

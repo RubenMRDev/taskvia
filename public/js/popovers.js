@@ -267,7 +267,10 @@ function viewMenu(anchor) {
         <button class="opt danger" data-v="delete">${icon('trash', 'sm')}<span class="grow">Eliminar tablero</span></button>`
       : `<button class="opt" data-v="sub">${icon('file-plus', 'sm')}<span class="grow">Añadir subpágina</span></button>
         <button class="opt" data-v="raw">${icon('file-code', 'sm')}<span class="grow">Editar como markdown</span></button>
-        <button class="opt" data-v="copy">${icon('copy', 'sm')}<span class="grow">Copiar ruta</span></button><div class="pop-sep"></div>
+        <button class="opt" data-v="copy">${icon('copy', 'sm')}<span class="grow">Copiar ruta</span></button>
+        ${window.desktop ? `<div class="pop-sep"></div><div class="pop-label">Exportar</div>
+        <button class="opt" data-v="export-md">${icon('file-down', 'sm')}<span class="grow">Markdown (.md)</span></button>
+        <button class="opt" data-v="export-pdf">${icon('file-text', 'sm')}<span class="grow">PDF</span></button>` : ''}<div class="pop-sep"></div>
         <button class="opt danger" data-v="delete">${icon('trash', 'sm')}<span class="grow">Eliminar página</span></button>`,
     pick: async v => {
       closePop();
@@ -281,6 +284,7 @@ function viewMenu(anchor) {
       if (v === 'dup-board') { const nb = await call('duplicateBoard', p, board.id); toast(`Creado «${nb.name}»`); return go({ type: 'board', project: p, id: nb.id }); }
       if (v === 'sub') return newPage(p, route.path);
       if (v === 'copy') return copyText(`${p} / ${route.path}`, 'Ruta copiada');
+      if (v === 'export-md' || v === 'export-pdf') return exportPage(v.slice(7));
       if (v === 'delete') deleteItem(t, { project: p, id: board?.id, path: route.path });
     },
   });

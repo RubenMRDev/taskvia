@@ -1,10 +1,12 @@
 // Taskvia, app de escritorio (Electron): levanta la UI local y la muestra en una ventana sin marco, con los
 // botones nativos de Windows superpuestos sobre la barra superior de la app.
-import { app, BrowserWindow, Menu, ipcMain, nativeTheme, shell } from 'electron';
+import { app, BrowserWindow, Menu, dialog, ipcMain, nativeTheme, shell } from 'electron';
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import * as updater from './updater.js';
 import { URL, ready } from './ui.js';
-import { DATA_DIR, assetPath, backupIfDue, getSettings, firstRun } from './store.js';
+import { DATA_DIR, assetPath, backupIfDue, getSettings, firstRun, readPage } from './store.js';
 import { seedExample } from './ejemplo.js';
 
 // Colores de la barra superior en claro/oscuro (los mismos que --bg y --text en index.html).
@@ -31,10 +33,83 @@ ipcMain.on('open-file', (_, project, file, reveal) => {
 
 // Configuración MCP para pegar en el asistente de IA. Instalada, el propio ejecutable hace de Node
 // (ELECTRON_RUN_AS_NODE), así que no hace falta tener Node instalado.
-ipcMain.handle('mcp-config', () => {
+const mcpServer = () => {
   const mcp = path.join(app.getAppPath(), 'mcp.js');
-  const server = app.isPackaged ? { command: process.execPath, args: [mcp], env: { ELECTRON_RUN_AS_NODE: '1' } } : { command: 'node', args: [mcp] };
-  return JSON.stringify({ mcpServers: { taskvia: server } }, null, 2);
+  return app.isPackaged ? { command: process.execPath, args: [mcp], env: { ELECTRON_RUN_AS_NODE: '1' } } : { command: 'node', args: [mcp] };
+};
+ipcMain.handle('mcp-config', () => JSON.stringify({ mcpServers: { taskvia: mcpServer() } }, null, 2));
+
+// «Conectar»: añade el servidor a la configuración MCP de los asistentes que encuentre (el de terminal en
+// ~/.claude.json y la app de escritorio) y deja en sus instrucciones globales (~/.claude/CLAUDE.md) la regla de
+// documentar en Taskvia, entre marcas para poder actualizarla sin duplicarla. Antes de tocar un fichero guarda copia.
+const RULE = `<!-- taskvia:inicio -->
+# Documentación en Taskvia
+
+Todo lo que sea documentar (guías, notas técnicas, decisiones, cómo probar algo) va en Taskvia con el MCP \`taskvia\` (\`doc_write\`), no en ficheros .md sueltos, salvo que pida un fichero. Las capturas van con su ruta absoluta en disco (\`![texto](C:/ruta/captura.png)\`): Taskvia las copia al proyecto. Si editas una página en varios pasos, avisa con \`doc_editing\`.
+<!-- taskvia:fin -->`;
+function editJSON(file, fn) {
+  const raw = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '{}';
+  const data = JSON.parse(raw || '{}');
+  if (fs.existsSync(file) && !fs.existsSync(file + '.taskvia-copia')) fs.writeFileSync(file + '.taskvia-copia', raw);
+  fn(data);
+  fs.writeFileSync(file + '.tmp', JSON.stringify(data, null, 2));
+  fs.renameSync(file + '.tmp', file);
+}
+ipcMain.handle('mcp-connect', () => {
+  const home = os.homedir(), done = [];
+  try {
+    if (fs.existsSync(path.join(home, '.claude')) || fs.existsSync(path.join(home, '.claude.json'))) {
+      editJSON(path.join(home, '.claude.json'), d => { d.mcpServers = { ...d.mcpServers, taskvia: { type: 'stdio', ...mcpServer() } }; });
+      const md = path.join(home, '.claude', 'CLAUDE.md');
+      fs.mkdirSync(path.dirname(md), { recursive: true });
+      const old = fs.existsSync(md) ? fs.readFileSync(md, 'utf8') : '';
+      const next = /<!-- taskvia:inicio -->[\s\S]*?<!-- taskvia:fin -->/.test(old)
+        ? old.replace(/<!-- taskvia:inicio -->[\s\S]*?<!-- taskvia:fin -->/, RULE) : `${old.trimEnd()}${old.trim() ? '\n\n' : ''}${RULE}\n`;
+      if (next !== old) { if (old && !fs.existsSync(md + '.taskvia-copia')) fs.writeFileSync(md + '.taskvia-copia', old); fs.writeFileSync(md, next); }
+      done.push('asistente de terminal');
+    }
+    const desk = path.join(process.env.APPDATA || path.join(home, 'Library', 'Application Support'), 'Claude');
+    if (fs.existsSync(desk)) {
+      editJSON(path.join(desk, 'claude_desktop_config.json'), d => { d.mcpServers = { ...d.mcpServers, taskvia: mcpServer() }; });
+      done.push('app de escritorio');
+    }
+    return { done };
+  } catch (e) {
+    return { error: `No se pudo conectar: ${e.message}` };
+  }
+});
+
+// Exportar una página: .md (con sus imágenes en una carpeta al lado) o PDF (la vista de la página, sin la app alrededor)
+ipcMain.on('open-path', (_, file) => { if (typeof file === 'string' && /\.(md|pdf)$/i.test(file)) shell.openPath(file); });
+ipcMain.handle('export-page', async (e, format, project, ref) => {
+  const pg = readPage(project, ref), name = pg.path.split('/').at(-1).replace(/[<>:"/\\|?*]/g, '');
+  const w = BrowserWindow.fromWebContents(e.sender);
+  const { canceled, filePath } = await dialog.showSaveDialog(w, {
+    defaultPath: path.join(app.getPath('documents'), `${name}.${format}`),
+    filters: format === 'pdf' ? [{ name: 'PDF', extensions: ['pdf'] }] : [{ name: 'Markdown', extensions: ['md'] }],
+  });
+  if (canceled || !filePath) return {};
+  try {
+    if (format === 'pdf') {
+      fs.writeFileSync(filePath, await e.sender.printToPDF({ pageSize: 'A4', printBackground: true, margins: { marginType: 'default' } }));
+    } else {
+      // Las imágenes del proyecto se copian a «<nombre>-imagenes» junto al .md y los enlaces apuntan ahí
+      const imgDir = `${path.basename(filePath, '.md')}-imagenes`;
+      let copied = 0;
+      const md = pg.content.replace(/\]\(assets\/([0-9a-f]{8}\.[a-z0-9]{1,10})\)/gi, (m, file) => {
+        try {
+          fs.mkdirSync(path.join(path.dirname(filePath), imgDir), { recursive: true });
+          fs.copyFileSync(assetPath(project, file), path.join(path.dirname(filePath), imgDir, file));
+          copied++;
+          return `](${imgDir}/${file})`;
+        } catch { return m; }
+      });
+      fs.writeFileSync(filePath, `# ${name}\n\n${md}`);
+    }
+    return { file: filePath };
+  } catch (err) {
+    return { error: `No se pudo exportar: ${err.message}` };
+  }
 });
 
 // Actualizaciones (solo con la app instalada), como en Moorage: comprobar es automático (al abrir y cada 4 h) y
