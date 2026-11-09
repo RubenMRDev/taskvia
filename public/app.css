@@ -690,6 +690,16 @@ body.resizing { cursor: col-resize; user-select: none; }
   .doc.pad { padding: 0 !important; max-width: none !important; }
   .doc img { max-width: 100% !important; break-inside: avoid; }
   .doc h1, .doc h2, .doc h3 { break-after: avoid; }
+  .doc .phead .big-emoji { display: none !important; }
+  .doc .phead .title { font-size: 26pt !important; margin-bottom: 10pt; }
+  .doc:has(.doc-body > h1:first-child) .phead { display: none !important; } /* si el texto ya empieza con su título, no se repite */
+  .doc-body > h1:first-child { margin-top: 0; }
+  .md pre { white-space: pre-wrap !important; word-break: break-word; overflow: visible !important; break-inside: avoid; }
+  .md p code, .md li code { word-break: break-word; }
+  .md td code, .md th code { white-space: nowrap; }
+  .md table { width: 100%; } .md tr { break-inside: avoid; }
+  .md a { color: inherit; }
+  .pagelink { box-shadow: none !important; }
 }
 
 /* Imágenes: tamaño elegido, selección con tirador y marcos de móvil y PC (se ven igual en el PDF) */
@@ -702,15 +712,16 @@ body.resizing { cursor: col-resize; user-select: none; }
 .img-opts button:hover { background: var(--hover); color: var(--text); }
 .img-opts button.on { box-shadow: inset 0 0 0 2px var(--accent); color: var(--text); }
 /* Marcos: la imagen dentro de un iPhone (bisel negro, esquinas de iOS y Dynamic Island) o de una ventana de Mac
-   (barra de título con los tres semáforos). Todo se escala con el ancho del marco (cqw). */
-.dev { display: block; position: relative; box-sizing: border-box; margin: 20px auto; max-width: 100%; container-type: inline-size; }
+   (barra de título con los tres semáforos). Sin container queries: con ellas el PDF sale en blanco; el bisel va en %
+   del ancho del marco (márgenes de la imagen) y las esquinas en px. */
+.dev { display: block; position: relative; box-sizing: border-box; margin: 20px auto; max-width: 100%; }
 .dev img { display: block; width: 100%; max-width: none; margin: 0; border-radius: 0; }
 .dev-movil { width: 300px; isolation: isolate; }
-.dev-movil::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 15cqw; background: #0a0a0c;
-  box-shadow: inset 0 0 0 0.9cqw #1d1d21, 0 0 0 1.5px #9a9aa0, 0 0 0 3px #3a3a3e, 0 18px 44px rgba(0,0,0,.3); }
-.dev-movil img { margin: 3.6cqw; width: calc(100% - 7.2cqw); border-radius: 11.6cqw; }
-.dev-movil::before { content: ""; position: absolute; z-index: 1; left: 50%; top: 6.6cqw; translate: -50% 0;
-  width: 30cqw; height: 8.8cqw; border-radius: 9cqw; background: #000; }
+.dev-movil::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 44px; background: #0a0a0c;
+  box-shadow: inset 0 0 0 2px #1d1d21, 0 0 0 1.5px #9a9aa0, 0 0 0 3px #3a3a3e, 0 18px 44px rgba(0,0,0,.3); }
+.dev-movil img { margin: 3.6%; width: 92.8%; border-radius: 34px; border-top: 34px solid #fff; box-sizing: content-box; } /* franja de estado de iOS: la isla no tapa la captura */
+.dev-movil::before { content: ""; position: absolute; z-index: 1; left: 50%; top: 16px; translate: -50% 0;
+  width: 30%; height: 22px; border-radius: 12px; background: #000; }
 .dev-pc { width: 100%; padding-top: 28px; border-radius: 10px; overflow: hidden; background: #fff;
   box-shadow: 0 0 0 1px rgba(0,0,0,.14), 0 22px 54px rgba(0,0,0,.24); }
 .dev-pc::before { content: ""; position: absolute; inset: 0 0 auto; height: 28px; border-bottom: 1px solid #cfcfd3; box-sizing: border-box;
@@ -719,4 +730,17 @@ body.resizing { cursor: col-resize; user-select: none; }
     radial-gradient(circle at 56px 14px, #28c840 0 6px, #1aab29 6px 6.5px, transparent 7px), linear-gradient(#ebebed, #dedee1); }
 .rte .dev:has(.img-sel) { outline: 2px solid var(--accent); outline-offset: 4px; }
 .rte .dev img.img-sel { outline: 0; }
-@media print { #img-handle { display: none !important; } .dev { break-inside: avoid; } }
+@media print {
+  #img-handle { display: none !important; }
+  .dev { break-inside: avoid; margin: 10pt auto; }
+  .dev-movil { zoom: .82; } /* en A4 caben dos móviles por hoja con su texto */
+  .dev-movil::after { box-shadow: inset 0 0 0 2px #1d1d21, 0 0 0 1.5px #9a9aa0, 0 0 0 3px #3a3a3e; }
+  .dev-pc { box-shadow: 0 0 0 1px rgba(0,0,0,.18); }
+  .md p:has(+ p > .dev), .md p:has(+ p > img) { break-after: avoid; } /* el texto que presenta una captura va con ella */
+}
+
+/* Zoom en la barra superior: − 100% + */
+.zoom { display: flex; align-items: center; gap: 0; margin-right: 4px; -webkit-app-region: no-drag; border-radius: 6px; }
+.zoom .ib { width: 24px; height: 24px; }
+#zoom-val { min-width: 42px; height: 24px; padding: 0 4px; border-radius: 4px; font-size: 12px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+#zoom-val:hover { background: var(--hover); color: var(--text); }

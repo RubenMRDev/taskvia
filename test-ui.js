@@ -9,6 +9,7 @@ import { _electron as electron } from 'playwright-core';
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tablero-ui-'));
 process.env.TABLERO_DIR = dir;
 process.env.TABLERO_PORT = '4596';
+process.env.TASKVIA_HIDDEN = '1'; // la ventana no se ve ni coge el foco mientras pasan las pruebas
 const s = await import('./store.js');
 
 // Datos de partida
@@ -406,6 +407,16 @@ await step('Exportar la página a Markdown y a PDF desde el menú «…»', asyn
   }
   assert.match(fs.readFileSync(path.join(out, 'Guía.md'), 'utf8'), /^# Guía/);
   assert.equal(fs.readFileSync(path.join(out, 'Guía.pdf')).subarray(0, 4).toString(), '%PDF');
+});
+
+await step('Zoom desde la barra superior: más, menos y volver al 100 %', async () => {
+  await win.locator('#zoom [data-zoom="1"]').click();
+  await until(async () => (await win.locator('#zoom-val').textContent()) === '110%', 'sube a 110 %');
+  await win.locator('#zoom [data-zoom="-1"]').click();
+  await win.locator('#zoom [data-zoom="-1"]').click();
+  await until(async () => (await win.locator('#zoom-val').textContent()) === '90%', 'baja a 90 %');
+  await win.locator('#zoom-val').click();
+  await until(async () => (await win.locator('#zoom-val').textContent()) === '100%', 'vuelve a 100 %');
 });
 
 await app.close();

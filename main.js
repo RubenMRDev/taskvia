@@ -91,7 +91,20 @@ ipcMain.handle('export-page', async (e, format, project, ref) => {
   if (canceled || !filePath) return {};
   try {
     if (format === 'pdf') {
-      fs.writeFileSync(filePath, await e.sender.printToPDF({ pageSize: 'A4', printBackground: true, margins: { marginType: 'default' } }));
+      // A4 con márgenes de 1,8 cm y pie con el nombre de la página y «x / y»
+      const foot = `<div style="width:100%;padding:0 1.8cm;font:8px Segoe UI,sans-serif;color:#888;display:flex;justify-content:space-between">
+        <span>${name.replace(/[<>&]/g, '')}</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>`;
+      // En tema oscuro Chromium pinta oscuros los márgenes de la hoja: se imprime siempre en claro y se vuelve al tema
+      const theme = nativeTheme.themeSource;
+      nativeTheme.themeSource = 'light';
+      for (let i = 0; i < 40 && await e.sender.executeJavaScript("matchMedia('(prefers-color-scheme: dark)').matches"); i++) await new Promise(r => setTimeout(r, 50));
+      // dos fotogramas pintados y un margen: si no, a veces la hoja sale con los márgenes aún oscuros
+      await e.sender.executeJavaScript('new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))');
+      await new Promise(r => setTimeout(r, 300));
+      try {
+        fs.writeFileSync(filePath, await e.sender.printToPDF({ pageSize: 'A4', printBackground: true,
+          margins: { top: 0.7, bottom: 0.8, left: 0.7, right: 0.7 }, displayHeaderFooter: true, headerTemplate: '<span></span>', footerTemplate: foot }));
+      } finally { nativeTheme.themeSource = theme; }
     } else {
       // Las imágenes del proyecto se copian a «<nombre>-imagenes» junto al .md y los enlaces apuntan ahí
       const imgDir = `${path.basename(filePath, '.md')}-imagenes`;
@@ -150,7 +163,9 @@ app.whenReady().then(async () => {
   win = new BrowserWindow({
     width: 1360, height: 860, minWidth: 720, minHeight: 480, title: 'Taskvia', icon: ICON,
     backgroundColor: overlay().color, titleBarStyle: 'hidden', titleBarOverlay: overlay(),
-    webPreferences: { preload: path.join(import.meta.dirname, 'preload.cjs') },
+    // TASKVIA_HIDDEN=1 (pruebas): sin ventana visible ni robar el foco, y sin frenar el render en segundo plano
+    show: !process.env.TASKVIA_HIDDEN,
+    webPreferences: { preload: path.join(import.meta.dirname, 'preload.cjs'), backgroundThrottling: !process.env.TASKVIA_HIDDEN },
   });
   nativeTheme.on('updated', () => { win.setTitleBarOverlay(overlay()); win.setBackgroundColor(overlay().color); });
   win.webContents.setWindowOpenHandler(({ url }) => { external(url); return { action: 'deny' }; });

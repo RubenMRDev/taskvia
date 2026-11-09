@@ -82,6 +82,30 @@ async function connectAI() {
   if (r.error) return toast(r.error, true);
   toast(r.done.length ? `Conectado: ${r.done.join(', ')}. Reinicia tu IA para que lo coja.` : 'No he encontrado ninguna IA instalada: usa «Copiar configuración».', !r.done.length);
 }
+// ---------- Zoom de la ventana: botones de la barra superior y Ctrl + / - / 0 (se recuerda entre sesiones) ----------
+const ZOOMS = [0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+function showZoom() { $('#zoom-val').textContent = Math.round(window.desktop.getZoom() * 100) + '%'; }
+function zoomStep(dir) {
+  const cur = window.desktop.getZoom();
+  const next = dir === 0 ? 1 : dir > 0 ? ZOOMS.find(z => z > cur + 0.001) ?? ZOOMS.at(-1) : [...ZOOMS].reverse().find(z => z < cur - 0.001) ?? ZOOMS[0];
+  window.desktop.setZoom(next);
+  try { localStorage.setItem('zoom', next); } catch {}
+  showZoom();
+}
+if (window.desktop?.setZoom) {
+  $('#zoom').hidden = false;
+  try { const z = +localStorage.getItem('zoom'); if (ZOOMS.includes(z)) window.desktop.setZoom(z); } catch {}
+  showZoom();
+  $('#zoom').addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (b) zoomStep(+b.dataset.zoom); });
+  document.addEventListener('keydown', e => {
+    if (!e.ctrlKey || e.altKey) return;
+    const dir = ['+', '='].includes(e.key) ? 1 : e.key === '-' ? -1 : e.key === '0' ? 0 : null;
+    if (dir === null) return;
+    e.preventDefault();
+    zoomStep(dir);
+  }, true);
+  addEventListener('resize', showZoom); // Ctrl + rueda también cambia el zoom: el porcentaje se actualiza
+}
 async function openSettings() {
   settings.lastBackup = (await call('listBackups'))[0];
   if (window.desktop) update = await window.desktop.updateStatus();

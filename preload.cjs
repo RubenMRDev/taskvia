@@ -1,5 +1,5 @@
 // Puente mínimo entre la UI y Electron: cambiar el tema nativo y abrir las carpetas de datos y de copias.
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webFrame } = require('electron');
 
 contextBridge.exposeInMainWorld('desktop', {
   setTheme: theme => ipcRenderer.send('theme', theme),
@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('desktop', {
   connectAI: () => ipcRenderer.invoke('mcp-connect'),
   exportPage: (format, project, path) => ipcRenderer.invoke('export-page', format, project, path),
   openPath: file => ipcRenderer.send('open-path', file),
+  getZoom: () => webFrame.getZoomFactor(),
+  setZoom: f => webFrame.setZoomFactor(f),
   updateStatus: () => ipcRenderer.invoke('update-status'),
   checkUpdate: () => ipcRenderer.invoke('update-check'),
   downloadUpdate: () => ipcRenderer.invoke('update-download'),
