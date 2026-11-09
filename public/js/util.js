@@ -19,6 +19,27 @@ marked.use({ extensions: [{
   },
   renderer: t => `<a class="pagelink" data-page="${esc(t.target)}" contenteditable="false">${esc(t.alias || t.target.split('/').at(-1))}</a>`,
 }] });
+// Imágenes con tamaño y marco en el texto alternativo: ![texto|50%](…), ![texto|320|movil](…), ![texto|pc](…).
+// El tamaño es % del ancho de la página o px; los marcos son movil y pc. Así lo puede escribir también la IA.
+const IMG_FRAMES = { movil: 'movil', 'móvil': 'movil', pc: 'pc' };
+function imgOpts(alt) {
+  const [text, ...rest] = String(alt || '').split('|');
+  let size = '', frame = '';
+  for (const t of rest.map(x => x.trim().toLowerCase())) {
+    if (/^\d{1,3}%$/.test(t)) size = Math.min(100, Math.max(5, parseInt(t))) + '%';
+    else if (/^\d{2,4}(px)?$/.test(t)) size = parseInt(t) + 'px';
+    else if (IMG_FRAMES[t]) frame = IMG_FRAMES[t];
+  }
+  return { text: text.trim(), size, frame };
+}
+const imgAlt = (text, size, frame) => [String(text || '').replace(/[[\]|]/g, '').trim(), ...[size, frame].filter(Boolean)].join('|');
+marked.use({ renderer: { image({ href, title, text }) {
+  const o = imgOpts(text);
+  const img = `<img src="${esc(href)}" alt="${esc(o.text)}"${title ? ` title="${esc(title)}"` : ''}${o.size ? ` data-size="${o.size}"` : ''}${o.frame ? ` data-frame="${o.frame}"` : ''}`;
+  // Con marco, la imagen va dentro de un iPhone o de una ventana de Mac, y el tamaño lo lleva el marco
+  return o.frame ? `<span class="dev dev-${o.frame}" contenteditable="false"${o.size ? ` style="width:${o.size}"` : ''}>${img}></span>`
+    : `${img}${o.size ? ` style="width:${o.size}"` : ''}>`;
+} } });
 const md = s => marked.parse(s || '');
 const COLORS = ['gray', 'brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red'];
 const COLOR_NAMES = { gray: 'Gris', brown: 'Marrón', orange: 'Naranja', yellow: 'Amarillo', green: 'Verde', blue: 'Azul', purple: 'Morado', pink: 'Rosa', red: 'Rojo' };

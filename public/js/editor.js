@@ -11,7 +11,7 @@ td.addRule('imagen', {
   filter: 'img',
   replacement: (_, n) => {
     const src = n.getAttribute('src') || '', m = /^\/asset\/[^/]+\/([^/?#]+)$/.exec(src);
-    return src ? `![${(n.getAttribute('alt') || '').replace(/[[\]]/g, '')}](${m ? 'assets/' + m[1] : src})` : '';
+    return src ? `![${imgAlt(n.getAttribute('alt'), n.dataset.size, n.dataset.frame)}](${m ? 'assets/' + m[1] : src})` : '';
   },
 });
 // Enlace a otra página → [[Ruta/Página]] (o [[Ruta/Página|texto]] si el texto no es el nombre)
@@ -157,6 +157,72 @@ async function saveRte(el, force = false) {
     showConflict(el, e.current);
   } finally { el._saving = false; }
 }
+// ---------- Imágenes en el editor: clic para elegir tamaño y marco; el tirador de la esquina reescala ----------
+const IMG_SIZES = [['33%', 'Pequeña'], ['50%', 'Mediana'], ['75%', 'Grande'], ['', 'Completa']];
+let imgSel = null;
+const imgHandle = Object.assign(document.createElement('div'), { id: 'img-handle', title: 'Arrastra para cambiar el tamaño' });
+imgHandle.hidden = true;
+document.body.append(imgHandle);
+const frameOf = img => img.parentElement?.classList.contains('dev') ? img.parentElement : null;
+// Pone en el DOM lo que dicen data-size y data-frame: el marco (iPhone o Mac) envuelve la imagen y lleva el ancho
+function applyImg(img) {
+  const size = img.dataset.size || '', frame = img.dataset.frame || '';
+  let w = frameOf(img);
+  if (frame && !w) { w = document.createElement('span'); w.contentEditable = 'false'; img.before(w); w.append(img); }
+  if (!frame && w) { w.before(img); w.remove(); w = null; }
+  const box = w || img;
+  if (w) { w.className = `dev dev-${frame}`; img.style.removeProperty('width'); }
+  if (size) box.style.width = size; else box.style.removeProperty('width');
+}
+function placeImgHandle() {
+  if (!imgSel?.isConnected) { imgSel?.classList.remove('img-sel'); imgSel = null; imgHandle.hidden = true; return; }
+  const r = (frameOf(imgSel) || imgSel).getBoundingClientRect();
+  Object.assign(imgHandle.style, { left: `${r.right - 7}px`, top: `${r.bottom - 7}px` });
+  imgHandle.hidden = false;
+}
+function setImg(img, { size, frame }) {
+  if (size !== undefined) { if (size) img.dataset.size = size; else delete img.dataset.size; }
+  if (frame !== undefined) { if (frame) img.dataset.frame = frame; else delete img.dataset.frame; }
+  applyImg(img);
+  const el = img.closest('.rte');
+  if (el) queueRteSave(el);
+  requestAnimationFrame(placeImgHandle);
+}
+function selectImg(img) {
+  imgSel?.classList.remove('img-sel');
+  imgSel = img; img.classList.add('img-sel');
+  placeImgHandle();
+  openPop(img, {
+    list: () => `<div class="pop-label">Tamaño</div><div class="img-opts">${IMG_SIZES.map(([v, l]) =>
+        `<button class="${(img.dataset.size || '') === v ? 'on' : ''}" data-v="size:${v}">${l}</button>`).join('')}</div>
+      <div class="pop-label">Marco</div><div class="img-opts">${[['', 'Sin marco', 'square'], ['movil', 'Móvil', 'smartphone'], ['pc', 'PC', 'monitor']].map(([v, l, ic]) =>
+        `<button class="${(img.dataset.frame || '') === v ? 'on' : ''}" data-v="frame:${v}">${icon(ic, 'sm')}${l}</button>`).join('')}</div>`,
+    pick: v => { const [k, val] = v.split(':'); setImg(img, { [k]: val }); drawPop(); },
+  });
+}
+document.addEventListener('click', e => {
+  const img = e.target.closest?.('.rte img');
+  if (img && img.closest('.rte').isContentEditable) return selectImg(img);
+  if (imgSel && !e.target.closest?.('#pop, #img-handle')) { imgSel.classList.remove('img-sel'); imgSel = null; imgHandle.hidden = true; }
+});
+document.addEventListener('scroll', () => imgSel && placeImgHandle(), true);
+addEventListener('resize', () => imgSel && placeImgHandle());
+imgHandle.addEventListener('pointerdown', e => {
+  if (!imgSel) return;
+  e.preventDefault();
+  closePop();
+  const img = imgSel, box = img.closest('.rte').getBoundingClientRect(), x0 = e.clientX, w0 = (frameOf(img) || img).getBoundingClientRect().width;
+  imgHandle.setPointerCapture(e.pointerId);
+  const move = ev => {
+    const pct = Math.round(Math.min(100, Math.max(10, (w0 + ev.clientX - x0) / box.width * 100)));
+    img.dataset.size = pct + '%';
+    applyImg(img);
+    placeImgHandle();
+  };
+  const up = () => { imgHandle.removeEventListener('pointermove', move); setImg(img, { size: img.dataset.size === '100%' ? '' : img.dataset.size }); };
+  imgHandle.addEventListener('pointermove', move);
+  imgHandle.addEventListener('pointerup', up, { once: true });
+});
 const flushRte = () => Promise.all([...rteTimers.keys()].map(el => saveRte(el)));
 
 // La sincronización ve un cambio de fuera mientras escribes: avisa antes de que choque al guardar.

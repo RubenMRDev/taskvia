@@ -168,8 +168,20 @@ await step('Imagen desde el menú «/»: se guarda en el proyecto y en el markdo
   await win.keyboard.press('Enter');
   await win.keyboard.type('/imagen');
   await win.locator('#pop.inline-menu .opt.kb', { hasText: 'Imagen' }).waitFor(); // la elegida, no solo visible: si no, Enter puede pillar el filtro a medias
-  const [chooser] = await Promise.all([win.waitForEvent('filechooser'), win.keyboard.press('Enter')]);
-  await chooser.setFiles(png);
+  // El diálogo de ficheros del sistema no siempre llega a Playwright en Electron: el <input type=file> recibe el
+  // fichero directamente (lo mismo que haría el diálogo) y se prueba el resto del camino de la app
+  await win.evaluate(b64 => {
+    const orig = HTMLInputElement.prototype.click;
+    HTMLInputElement.prototype.click = function () {
+      if (this.type !== 'file') return orig.call(this);
+      HTMLInputElement.prototype.click = orig;
+      const dt = new DataTransfer();
+      dt.items.add(new File([Uint8Array.from(atob(b64), c => c.charCodeAt(0))], 'punto.png', { type: 'image/png' }));
+      this.files = dt.files;
+      this.dispatchEvent(new Event('change'));
+    };
+  }, fs.readFileSync(png).toString('base64'));
+  await win.keyboard.press('Enter');
   await main.locator('.rte img').waitFor();
   await until(() => /!\[\]\(assets\/[0-9a-f]{8}\.png\)/.test(s.readPage('Demo', 'Guía').content), 'el markdown apunta a assets/', 6000);
 });
@@ -352,6 +364,24 @@ await step('Portada desde el menú de la tarjeta: color y tamaño completo', asy
   const c = s.getBoard('Otro', 'Con tamaño').cards.find(x => x.id === id);
   assert.equal(c.cover, 'green'); assert.equal(c.coverSize, 'full');
   await win.keyboard.press('Escape');
+});
+
+await step('Imagen: tamaño y marco desde su menú, y reescalar con el tirador', async () => {
+  await win.locator('#tree [data-kind="page"][data-path="Guía"]').click();
+  const img = main.locator('.rte img').first();
+  await img.click();
+  await win.locator('#pop [data-v="size:50%"]').click();
+  await win.locator('#pop [data-v="frame:movil"]').click();
+  await until(() => /!\[[^\]]*\|50%\|movil\]\(assets\//.test(s.readPage('Demo', 'Guía').content), 'se guarda |50%|movil', 6000);
+  await win.keyboard.press('Escape');
+  await img.click();
+  await win.keyboard.press('Escape');
+  const h = await win.locator('#img-handle').boundingBox();
+  await win.mouse.move(h.x + 7, h.y + 7);
+  await win.mouse.down();
+  await win.mouse.move(h.x - 120, h.y + 7, { steps: 6 });
+  await win.mouse.up();
+  await until(() => { const m = /\|(\d+)%\|movil\]/.exec(s.readPage('Demo', 'Guía').content); return m && +m[1] < 50; }, 'el tirador la hace más pequeña', 6000);
 });
 
 await step('La IA está editando: robot en la barra lateral y página solo de lectura', async () => {

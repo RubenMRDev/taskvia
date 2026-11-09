@@ -20,7 +20,7 @@ const server = new McpServer({ name: 'taskvia', version: '1.0.0' }, {
 - Los iconos son de Lucide ("rocket", "lucide:bug:red"); no uses emojis.
 - Todo lo que sea documentar (guías, notas técnicas, decisiones, cómo probar algo) va en páginas de Taskvia con doc_write, no en ficheros .md sueltos del repo, salvo que el usuario pida un fichero.
 - Si vas a editar una página en varios pasos, llama antes a doc_editing (editing: true) y al acabar con editing: false: la app enseña que la estás editando y no deja tocarla.
-- Para meter capturas o imágenes en una página, escríbelas en doc_write con su ruta absoluta en disco (![texto](C:/ruta/img.png)): Taskvia las copia dentro del proyecto y se ven en la app.`,
+- Para meter capturas o imágenes en una página, escríbelas en doc_write con su ruta absoluta en disco (![texto](C:/ruta/img.png)): Taskvia las copia dentro del proyecto y se ven en la app. Las capturas grandes, más pequeñas con ![texto|60%](…); las de móvil, con marco: ![texto|35%|movil](…); las de escritorio, ![texto|pc](…).`,
 });
 
 const tool = (name, description, inputSchema, fn) =>
@@ -148,7 +148,7 @@ tool('doc_list', 'Listar las páginas de un proyecto (rutas anidadas).', { proje
 
 tool('doc_read', 'Leer una página.', { project: projectArg, path: z.string() }, ({ project, path }) => s.readPage(project, path).content);
 
-tool('doc_write', 'Crear o sobrescribir una página markdown. Las páginas padre de la ruta se crean solas. Enlaza otras páginas con [[Ruta/Página]]. Imágenes: ponlas con su ruta absoluta en disco, ![texto](C:/ruta/captura.png); Taskvia las copia al proyecto y deja el enlace apuntando a su copia.', {
+tool('doc_write', 'Crear o sobrescribir una página markdown. Las páginas padre de la ruta se crean solas. Enlaza otras páginas con [[Ruta/Página]]. Imágenes: ponlas con su ruta absoluta en disco, ![texto](C:/ruta/captura.png); Taskvia las copia al proyecto y deja el enlace apuntando a su copia. Tamaño y marco van en el texto alternativo separados por |: ![texto|50%](…) o ![texto|320](…) para hacerla más pequeña (% del ancho o px), y |movil o |pc para enmarcarla en un iPhone o en una ventana de Mac (![texto|40%|movil](…)).', {
   project: projectArg, path: z.string().describe('Ej. "API/Autenticación"'), content: z.string(), icon: iconArg,
 }, ({ project, path, content, icon }) => { s.writePage(project, path, { content, icon }); return 'ok'; });
 
